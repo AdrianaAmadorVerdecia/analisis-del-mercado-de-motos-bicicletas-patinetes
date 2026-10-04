@@ -1,0 +1,16 @@
+# archivos de configuracion del editor
+.idea/
+.vscode/
+
+# python
+__pycache__/
+*.py[cod]
+
+# logs y salidas temporales
+*.log
+*.err.txt
+gh_login.txt
+gh_login.err.txt
+
+# notebooks
+.ipynb_checkpoints/
