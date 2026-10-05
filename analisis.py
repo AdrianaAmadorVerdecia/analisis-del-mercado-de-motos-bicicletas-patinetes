@@ -30,6 +30,7 @@ import json
 import statistics as stat
 from pathlib import Path
 
+import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 
 # ==============================================================================
@@ -252,6 +253,12 @@ def _guardar(fig, ruta: Path | None):
     return fig
 
 
+def _leyenda_arriba(ax, casos):
+    """Leyenda horizontal colocada encima del area del grafico."""
+    ax.legend(handles=casos, frameon=False, fontsize=12.5,
+              loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2)
+
+
 # --------------------------------- graficos (revolico)
 
 def figura_precios(ruta: Path | None = None):
@@ -262,43 +269,50 @@ def figura_precios(ruta: Path | None = None):
     promedios = [resumen[c]["promedio"] for c in ORDEN]
     medianas = [resumen[c]["mediana"] for c in ORDEN]
 
-    fig, ax = plt.subplots(figsize=(11, 6.8))
+    fig, ax = plt.subplots(figsize=(11, 7))
     posiciones = list(range(len(nombres)))
     ancho = 0.55
+    medio = ancho / 2
 
     ax.bar(posiciones, promedios, ancho,
            color=[COLORES[c] for c in ORDEN], edgecolor="white", linewidth=2, zorder=2)
 
-    # marca de la mediana, encima de cada barra
-    ax.hlines(medianas, [p - ancho / 2 for p in posiciones], [p + ancho / 2 for p in posiciones],
-              color="white", linewidth=4.5, zorder=3)
+    # marca de la mediana: linea negra que sobresale de la barra, con borde blanco
+    for p, mediana in zip(posiciones, medianas):
+        ax.plot([p - medio - 0.11, p + medio + 0.11], [mediana, mediana],
+                color="#111111", linewidth=4.5, zorder=4, solid_capstyle="butt",
+                path_effects=[pe.withStroke(linewidth=8, foreground="white")])
+        for extremo in (p - medio - 0.11, p + medio + 0.11):
+            ax.plot([extremo, extremo], [mediana - 30, mediana + 30],
+                    color="#111111", linewidth=4.5, zorder=4,
+                    path_effects=[pe.withStroke(linewidth=8, foreground="white")])
 
     for p, categoria in zip(posiciones, ORDEN):
         r = resumen[categoria]
-        ax.text(p, r["promedio"] + 90, f"promedio  {r['promedio']:,.0f}".replace(",", "."),
-                ha="center", fontsize=13, fontweight="bold")
-        ax.text(p, r["promedio"] - 170, f"mediana  {r['mediana']:,.0f}".replace(",", "."),
-                ha="center", fontsize=11.5, color="white", fontweight="bold")
+        ax.text(p, r["promedio"] + 235, f"promedio  {r['promedio']:,.0f}".replace(",", "."),
+                ha="center", fontsize=13.5, fontweight="bold", color="#111111")
+        ax.text(p, r["promedio"] + 95, f"mediana  {r['mediana']:,.0f}".replace(",", "."),
+                ha="center", fontsize=13, fontweight="bold", color="#111111")
 
     ax.set_xticks(posiciones)
     ax.set_xticklabels(
         [f"{n}\n{r['anuncios']} anuncios" for n, r in zip(nombres, [resumen[c] for c in ORDEN])],
         fontsize=12.5)
     ax.set_ylabel("Precio (USD)", fontsize=12.5)
-    ax.set_ylim(0, 2900)
+    ax.set_ylim(0, 3300)
     ax.tick_params(axis="y", labelsize=11.5)
     ax.set_title("Precio de las categorías de vehículos eléctricos en La Habana",
-                 fontsize=16, fontweight="bold", pad=20)
+                 fontsize=16, fontweight="bold", pad=42)
 
-    # leyenda general, construida a mano para que tenga un solo motivo
+    # leyenda general: barra = promedio, linea negra = mediana
     from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
-    ax.legend(handles=[
-        Patch(facecolor="#6B7280", edgecolor="white", label="Precio promedio de la categoría"),
-        Line2D([0], [0], color="#6B7280", linewidth=4.5, marker="s", markersize=9,
-               markerfacecolor="#6B7280", markeredgecolor="white",
-               label="Precio más común (mediana)"),
-    ], frameon=False, fontsize=12, loc="upper right")
+    _leyenda_arriba(ax, [
+        Patch(facecolor="#6B7280", edgecolor="white", label="Barra: precio promedio"),
+        Line2D([0], [0], color="#111111", linewidth=4.5,
+               path_effects=[pe.withStroke(linewidth=8, foreground="white")],
+               label="Línea negra: precio más común (mediana)"),
+    ])
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
@@ -332,14 +346,14 @@ def figura_disponibilidad(ruta: Path | None = None):
     ax.set_xlim(0, max(totales) * 1.28)
     ax.tick_params(axis="x", labelsize=11.5)
     ax.set_title(f"Anuncios al alcance de un presupuesto de {PRESUPUESTO_LUCY} USD",
-                 fontsize=16, fontweight="bold", pad=20)
+                 fontsize=16, fontweight="bold", pad=44)
 
     from matplotlib.patches import Patch
-    ax.legend(handles=[
-        Patch(facecolor="#6B7280", edgecolor="white", label="Anuncios que puede comprar"),
+    _leyenda_arriba(ax, [
+        Patch(facecolor="#6B7280", edgecolor="white", label="Barra sólida: anuncios que puede comprar"),
         Patch(facecolor="white", edgecolor="#9CA3AF", hatch="///",
-              label="Anuncios publicados en total"),
-    ], frameon=False, fontsize=12, loc="lower right")
+              label="Barra rayada: anuncios publicados en total"),
+    ])
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
@@ -382,15 +396,15 @@ def figura_autonomia_alcanzable(ruta: Path | None = None):
     ax.set_ylim(-0.6, len(ORDEN) - 0.4)
     ax.tick_params(axis="x", labelsize=11.5)
     ax.set_title(f"Autonomía disponible dentro del presupuesto de {PRESUPUESTO_LUCY} USD",
-                 fontsize=16, fontweight="bold", pad=20)
+                 fontsize=16, fontweight="bold", pad=44)
 
     from matplotlib.patches import Patch
-    ax.legend(handles=[
+    _leyenda_arriba(ax, [
         Patch(facecolor="#6B7280", edgecolor="white",
-              label="Autonomía más común (mediana)"),
+              label="Barra clara: autonomía más común (mediana)"),
         Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.32,
-              label="Rango entre el mínimo y el máximo"),
-    ], frameon=False, fontsize=12, loc="lower right")
+              label="Barra translúcida: rango entre el mínimo y el máximo"),
+    ])
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
