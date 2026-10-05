@@ -1,6 +1,4 @@
 requests
-pandas
-numpy
 matplotlib
 jupyter
 nbformat

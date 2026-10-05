@@ -54,9 +54,13 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
    mínimo y máximo, más la revisión de valores atípicos por rango intercuartílico,
    y un gráfico de barras.
 
-9. **Análisis 2 — El presupuesto de Lucy.** Cuántos anuncios de cada categoría
-   quedan dentro de los 1.500 dólares, en qué rango de precio y con qué autonomía,
-   mostrado en un gráfico de dispersión en tres paneles.
+9. **Qué puede comprar Lucy con su presupuesto.** Cuántos anuncios de cada
+   categoría quedan dentro de los 1.500 dólares, en qué rango de precio y con qué
+   autonomía, con las motos baratas detalladas una por una.
+
+10. **Reestructuración del proyecto.** Todo el código pasó a un único archivo
+    (`analisis.py`), organizado por fuente de datos. El notebook quedó sin código:
+    solo texto, tablas e imágenes, para que se pueda leer directamente en GitHub.
 
 **Decisiones**
 
@@ -73,6 +77,12 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
   autora indique cuál y cómo**.
 - Como en Revolico no se conoce la calidad real del producto, el primer análisis
   se centró en el precio y no en la autonomía, que es el dato que más se publica.
+- **El notebook no lleva código.** Todo vive en un único archivo, `analisis.py`,
+  dividido por secciones: configuración, utilidades, fuente 1 (Revolico) y un
+  espacio reservado para las demás fuentes. Así se puede leer el proyecto entero
+  en GitHub sin ejecutar nada, que era el problema del notebook anterior.
+- Cada análisis lleva su explicación, después la tabla, después la explicación del
+  gráfico, después el gráfico y al final un resumen con lo que se evidencia.
 
 **Problemas**
 
@@ -81,15 +91,19 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
 - El script inicial no encontraba la autonomía cuando el anuncio usaba tildes
   ("Autonomía") y detectaba marcas falsos a partir del voltaje.
 - **No hay salida a PyPI desde la conexión actual**, así que `pandas` no se pudo
-  instalar. El notebook quedó escrito solo con la biblioteca estándar y
-  `matplotlib`, que ya estaba instalado.
+  instalar. Todo quedó escrito con la biblioteca estándar (`json`, `statistics`)
+  y `matplotlib`, que ya estaba instalado.
+- El primer push a GitHub falló porque el sistema usó la cuenta equivocada. Se
+  fijó la cuenta de la autora solo para este repositorio, sin tocar la
+  configuración global de Git.
 - Solo hay 2 anuncios de todo el conjunto que superan los 80 km de autonomía, así
   que no alcanza para comparar "qué vehículo le conviene más" a Lucy. Esa
   pregunta queda abierta hasta tener datos de calidad de otras fuentes.
 
 **Pendiente**
 
+- Revisar los dos gráficos con la autora y ajustar lo que pida.
 - Completar la lista de fuentes (Telegram, encuestas, mercados).
-- Repetir los análisis 1 y 2 en cada fuente nueva y comparar resultados.
+- Repetir los análisis en cada fuente nueva y comparar resultados.
 - Escribir las conclusiones.
 - Actualizar `HANDS_OFF.md` con los resultados.
