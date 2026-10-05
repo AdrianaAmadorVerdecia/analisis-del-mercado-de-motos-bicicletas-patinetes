@@ -16,7 +16,7 @@ dicen con claridad cuánto rinde cada uno.
 | `analisis.py` | **Todo el código del proyecto.** Aquí van los cálculos, las tablas y los gráficos, organizados por fuente de datos. |
 | `data/anuncios_revolico.json` | 224 anuncios de La Habana (75 motos, 75 bicicletas, 74 patinetes) |
 | `scraper_revolico.py` | Script que recopila y depura los anuncios |
-| `graficos/` | Los gráficos que genera `analisis.py` |
+| `graficos/` | Los tres gráficos que genera `analisis.py` |
 | `JOURNAL.md` | Bitácora diaria: qué se hizo cada día, sin hora |
 | `HANDS_OFF.md` | Guía de traspaso: cómo reproducir el proyecto |
 
@@ -39,10 +39,14 @@ python scraper_revolico.py
 
 ## La estructura
 
-El proyecto se analiza **fuente por fuente**: Revolico, los sitios de venta informal,
+El estudio se organiza **fuente por fuente**: Revolico, los sitios de venta informal,
 las encuestas a personas y los mercados de vehículos eléctricos. En `analisis.py` cada
-fuente tiene su propia sección, y los gráficos que produce se van incorporando al
-notebook en el orden en que se analizan.
+fuente tiene su propia sección, y los gráficos que produce se incorporan al notebook en
+el orden en que se analizan.
+
+El análisis de Revolico comprende tres etapas: el precio de cada categoría, la
+disponibilidad de cada categoría dentro del presupuesto de referencia y la autonomía
+que ese presupuesto permite adquirir.
 
 ## Autora
 

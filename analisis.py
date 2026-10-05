@@ -245,160 +245,165 @@ def tabla_motos_alcanzables_markdown(anuncios: list[dict] | None = None) -> str:
 
 
 # --------------------------------- graficos (revolico)
+def _guardar(fig, ruta: Path | None):
+    if ruta is not None:
+        fig.savefig(ruta, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+    return fig
+
+
+# --------------------------------- graficos (revolico)
 
 def figura_precios(ruta: Path | None = None):
-    """Barras: precio promedio y mas comun de cada categoria."""
-    anuncios = cargar_anuncios()
-    resumen = resumen_precios(anuncios)
+    """Barras verticales: precio promedio de cada categoria, con la mediana marcada."""
+    resumen = resumen_precios()
 
     nombres = [ETIQUETAS[c] for c in ORDEN]
     promedios = [resumen[c]["promedio"] for c in ORDEN]
     medianas = [resumen[c]["mediana"] for c in ORDEN]
 
-    fig, ax = plt.subplots(figsize=(11, 6.5))
+    fig, ax = plt.subplots(figsize=(11, 6.8))
     posiciones = list(range(len(nombres)))
-    ancho = 0.36
+    ancho = 0.55
 
-    colores_promedio = [COLORES[c] for c in ORDEN]
+    ax.bar(posiciones, promedios, ancho,
+           color=[COLORES[c] for c in ORDEN], edgecolor="white", linewidth=2, zorder=2)
 
-    ax.bar([p - ancho / 2 for p in posiciones], promedios, ancho,
-           color=colores_promedio, edgecolor="white", linewidth=1.5,
-           label="Precio promedio")
-    ax.bar([p + ancho / 2 for p in posiciones], medianas, ancho,
-           color=[c + "99" for c in colores_promedio], edgecolor="white", linewidth=1.5,
-           hatch="//", label="Precio más común (mediana)")
+    # marca de la mediana, encima de cada barra
+    ax.hlines(medianas, [p - ancho / 2 for p in posiciones], [p + ancho / 2 for p in posiciones],
+              color="white", linewidth=4.5, zorder=3)
 
-    for p, valor in zip([q - ancho / 2 for q in posiciones], promedios):
-        ax.text(p, valor + 70, f"{valor:,.0f}".replace(",", "."),
-                ha="center", fontsize=12, fontweight="bold", color=COLOR_MEDIANA)
-    for p, valor in zip([q + ancho / 2 for q in posiciones], medianas):
-        ax.text(p, valor + 70, f"{valor:,.0f}".replace(",", "."),
-                ha="center", fontsize=11, color="#555555")
+    for p, categoria in zip(posiciones, ORDEN):
+        r = resumen[categoria]
+        ax.text(p, r["promedio"] + 90, f"promedio  {r['promedio']:,.0f}".replace(",", "."),
+                ha="center", fontsize=13, fontweight="bold")
+        ax.text(p, r["promedio"] - 170, f"mediana  {r['mediana']:,.0f}".replace(",", "."),
+                ha="center", fontsize=11.5, color="white", fontweight="bold")
 
     ax.set_xticks(posiciones)
     ax.set_xticklabels(
-        [f"{n}\n({c} anuncios)" for n, c in
-         zip(nombres, [resumen[c]["anuncios"] for c in ORDEN])],
-        fontsize=12)
-    ax.set_ylabel("Precio en dólares (USD)", fontsize=12)
-    ax.set_ylim(0, 3100)
-    ax.tick_params(axis="y", labelsize=11)
-    ax.set_title("Cuánto cuesta cada tipo de vehículo eléctrico\n"
-                 "224 anuncios de La Habana publicados en Revolico",
-                 fontsize=15, fontweight="bold", pad=18)
-    ax.legend(frameon=False, fontsize=12, loc="upper right")
+        [f"{n}\n{r['anuncios']} anuncios" for n, r in zip(nombres, [resumen[c] for c in ORDEN])],
+        fontsize=12.5)
+    ax.set_ylabel("Precio (USD)", fontsize=12.5)
+    ax.set_ylim(0, 2900)
+    ax.tick_params(axis="y", labelsize=11.5)
+    ax.set_title("Precio de las categorías de vehículos eléctricos en La Habana",
+                 fontsize=16, fontweight="bold", pad=20)
+
+    # leyenda general, construida a mano para que tenga un solo motivo
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    ax.legend(handles=[
+        Patch(facecolor="#6B7280", edgecolor="white", label="Precio promedio de la categoría"),
+        Line2D([0], [0], color="#6B7280", linewidth=4.5, marker="s", markersize=9,
+               markerfacecolor="#6B7280", markeredgecolor="white",
+               label="Precio más común (mediana)"),
+    ], frameon=False, fontsize=12, loc="upper right")
+
     ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4)
+    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
     fig.tight_layout()
-
-    if ruta is not None:
-        fig.savefig(ruta, dpi=150)
-        plt.close(fig)
-    return fig
+    return _guardar(fig, ruta)
 
 
-def _anotar(ax, punto, texto, color):
-    """Escribe una etiqueta junto a un punto, con su linea guía."""
-    ax.annotate(
-        texto,
-        xy=(punto["precio"], punto["autonomia_km"]),
-        xytext=(12, 12), textcoords="offset points",
-        fontsize=10.5, color=color, fontweight="bold",
-        bbox=dict(boxstyle="round,pad=0.35", fc="white", ec=color, lw=1.2, alpha=0.95),
-        arrowprops=dict(arrowstyle="->", color=color, lw=1.3),
-    )
+def figura_disponibilidad(ruta: Path | None = None):
+    """Barras horizontales: cuantos anuncios puede comprar Lucy en cada categoria."""
+    resumen = resumen_presupuesto()
+
+    nombres = [ETIQUETAS[c] for c in ORDEN]
+    alcanzables = [resumen[c]["alcanzables"] for c in ORDEN]
+    totales = [resumen[c]["anuncios"] for c in ORDEN]
+    posiciones = list(range(len(nombres)))
+
+    fig, ax = plt.subplots(figsize=(11, 5.6))
+
+    ax.barh(posiciones, alcanzables, 0.55,
+            color=[COLORES[c] for c in ORDEN], edgecolor="white", linewidth=2, zorder=3)
+    ax.barh(posiciones, totales, 0.55,
+            color="white", edgecolor="#9CA3AF", linewidth=2, hatch="///", zorder=2)
+
+    for p, (n_alcanzable, n_total) in enumerate(zip(alcanzables, totales)):
+        ax.text(n_alcanzable + 2.5, p, f"{n_alcanzable} de {n_total} anuncios",
+                va="center", fontsize=13, fontweight="bold")
+
+    ax.set_yticks(posiciones)
+    ax.set_yticklabels(nombres, fontsize=13)
+    ax.set_xlabel("Número de anuncios", fontsize=12.5)
+    ax.set_xlim(0, max(totales) * 1.28)
+    ax.tick_params(axis="x", labelsize=11.5)
+    ax.set_title(f"Anuncios al alcance de un presupuesto de {PRESUPUESTO_LUCY} USD",
+                 fontsize=16, fontweight="bold", pad=20)
+
+    from matplotlib.patches import Patch
+    ax.legend(handles=[
+        Patch(facecolor="#6B7280", edgecolor="white", label="Anuncios que puede comprar"),
+        Patch(facecolor="white", edgecolor="#9CA3AF", hatch="///",
+              label="Anuncios publicados en total"),
+    ], frameon=False, fontsize=12, loc="lower right")
+
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
+    fig.tight_layout()
+    return _guardar(fig, ruta)
 
 
-def figura_presupuesto(ruta: Path | None = None):
-    """Tres paneles apilados: precio contra autonomia, con el presupuesto de Lucy."""
-    anuncios = cargar_anuncios()
-    resumen = resumen_presupuesto(anuncios)
+def figura_autonomia_alcanzable(ruta: Path | None = None):
+    """Barras horizontales con rango: autonomia que se compra dentro del presupuesto."""
+    resumen = resumen_presupuesto()
 
-    limite_x = (0, 3600)
-    limite_y = (0, 185)
+    nombres = [ETIQUETAS[c] for c in ORDEN]
+    minimos = [resumen[c]["autonomia_min"] or 0 for c in ORDEN]
+    medianas = [resumen[c]["autonomia_mediana"] or 0 for c in ORDEN]
+    maximos = [resumen[c]["autonomia_max"] or 0 for c in ORDEN]
+    posiciones = list(range(len(nombres)))
 
-    fig, ejes = plt.subplots(3, 1, figsize=(13, 16.5), sharex=True)
-    fig.subplots_adjust(hspace=0.18)
+    fig, ax = plt.subplots(figsize=(11, 5.6))
 
-    for eje, categoria in zip(ejes, ORDEN):
-        todos = grupo(categoria, anuncios)
-        dentro = alcanzables(categoria, anuncios)
+    for p, categoria, vmin, vmed, vmax in zip(
+            posiciones, ORDEN, minimos, medianas, maximos):
         color = COLORES[categoria]
+        # rango completo: del minimo al maximo
+        ax.barh(p, vmax - vmin, 0.42, left=vmin,
+                color=color, alpha=0.32, edgecolor=color, linewidth=1.6, zorder=2)
+        # barra desde cero hasta la mediana
+        ax.barh(p, vmed, 0.42, color=color, edgecolor="white", linewidth=2, zorder=3)
+        # marca de la mediana
+        ax.plot([vmed, vmed], [p - 0.29, p + 0.29], color="white", linewidth=4, zorder=4)
 
-        # franja del presupuesto
-        eje.axvspan(limite_x[0], PRESUPUESTO_LUCY, color="#FFF4E0", zorder=0)
-        # anuncios fuera del alcance, de fondo
-        eje.scatter([a["precio"] for a in todos if a["precio"] > PRESUPUESTO_LUCY],
-                    [a["autonomia_km"] for a in todos if a["precio"] > PRESUPUESTO_LUCY],
-                    s=55, color=COLOR_FUERA, edgecolor="white", linewidth=0.8, zorder=2)
-        # anuncios que Lucy puede comprar
-        eje.scatter([a["precio"] for a in dentro], [a["autonomia_km"] for a in dentro],
-                    s=95, color=color, edgecolor="white", linewidth=1.4, zorder=3)
+        ax.text(vmax + 3, p, f"{vmin:.0f} – {vmax:.0f} km", va="center",
+                fontsize=12, fontweight="bold", color=color)
+        ax.text(vmed / 2, p, f"{vmed:.0f} km", va="center", ha="center",
+                fontsize=13, fontweight="bold", color="white", zorder=5)
 
-        # linea del presupuesto
-        eje.axvline(PRESUPUESTO_LUCY, color=COLOR_PRESUPUESTO, linestyle="--",
-                    linewidth=2.2, zorder=1)
-        # linea de la autonomia mas comun dentro del presupuesto
-        if resumen[categoria]["autonomia_mediana"] is not None:
-            eje.axhline(resumen[categoria]["autonomia_mediana"], color="#444444",
-                        linestyle=":", linewidth=1.6, zorder=1)
-            eje.text(limite_x[0] + 60, resumen[categoria]["autonomia_mediana"] + 4,
-                     f"autonomía más común: {resumen[categoria]['autonomia_mediana']:.0f} km",
-                     fontsize=10.5, color="#333333", style="italic")
+    ax.set_yticks(posiciones)
+    ax.set_yticklabels(nombres, fontsize=13)
+    ax.set_xlabel("Autonomía (km)", fontsize=12.5)
+    ax.set_xlim(0, max(maximos) * 1.32)
+    ax.set_ylim(-0.6, len(ORDEN) - 0.4)
+    ax.tick_params(axis="x", labelsize=11.5)
+    ax.set_title(f"Autonomía disponible dentro del presupuesto de {PRESUPUESTO_LUCY} USD",
+                 fontsize=16, fontweight="bold", pad=20)
 
-        # los tres anuncios que cuentan la historia de cada categoría
-        noteworthy = []
-        if dentro:
-            noteworthy.append(min(dentro, key=lambda a: a["precio"]))
-            noteworthy.append(max(dentro, key=lambda a: a["autonomia_km"]))
-            mejor_rendimiento = max(dentro, key=lambda a: a["autonomia_km"] / a["precio"])
-            if mejor_rendimiento["id"] not in {a["id"] for a in noteworthy}:
-                noteworthy.append(mejor_rendimiento)
-        vistos = set()
-        for punto in noteworthy:
-            if punto["id"] in vistos:
-                continue
-            vistos.add(punto["id"])
-            _anotar(eje, punto,
-                    f"{punto['precio']:,.0f}".replace(",", ".") + " USD · "
-                    + f"{punto['autonomia_km']} km", color)
+    from matplotlib.patches import Patch
+    ax.legend(handles=[
+        Patch(facecolor="#6B7280", edgecolor="white",
+              label="Autonomía más común (mediana)"),
+        Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.32,
+              label="Rango entre el mínimo y el máximo"),
+    ], frameon=False, fontsize=12, loc="lower right")
 
-        r = resumen[categoria]
-        titulo = (f"{ETIQUETAS[categoria]}:  {r['alcanzables']} anuncios de {r['anuncios']}"
-                  f"  le quedan dentro del presupuesto")
-        eje.set_title(titulo, fontsize=14, fontweight="bold", color=color, loc="left", pad=12)
-
-        eje.set_xlim(*limite_x)
-        eje.set_ylim(*limite_y)
-        eje.set_xticks(range(0, limite_x[1] + 1, 500))
-        eje.set_yticks(range(0, limite_y[1], 20))
-        eje.set_ylabel("Autonomía (km)", fontsize=12)
-        eje.grid(True, linestyle=":", alpha=0.35)
-        eje.spines[["top", "right"]].set_visible(False)
-
-        if categoria == ORDEN[0]:
-            eje.text(PRESUPUESTO_LUCY - 40, limite_y[1] * 0.96,
-                     "◀ hasta aquí puede comprar Lucy", ha="right", fontsize=11.5,
-                     color=COLOR_PRESUPUESTO, fontweight="bold")
-
-    ejes[-1].set_xlabel("Precio en dólares (USD)", fontsize=13)
-    ejes[-1].tick_params(axis="x", labelsize=11)
-
-    fig.suptitle(
-        "Qué puede comprar Lucy con 1.500 dólares\n"
-        "Cada punto es un anuncio: precio hacia la derecha, autonomía hacia arriba",
-        fontsize=17, fontweight="bold", y=0.985)
-    if ruta is not None:
-        fig.savefig(ruta, dpi=150)
-        plt.close(fig)
-    return fig
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
+    fig.tight_layout()
+    return _guardar(fig, ruta)
 
 
 def ejecutar():
     """Genera y guarda todos los graficos del proyecto."""
     CARPETA_GRAFICOS.mkdir(exist_ok=True)
-    figura_precios(CARPETA_GRAFICOS / "analisis_precios.png")
-    figura_presupuesto(CARPETA_GRAFICOS / "analisis_presupuesto.png")
+    figura_precios(CARPETA_GRAFICOS / "precios_categoria.png")
+    figura_disponibilidad(CARPETA_GRAFICOS / "alcance_presupuesto.png")
+    figura_autonomia_alcanzable(CARPETA_GRAFICOS / "autonomia_alcanzable.png")
     return CARPETA_GRAFICOS
 
 

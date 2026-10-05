@@ -50,15 +50,18 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
    notebook: el caso de Lucy, estudiante de MATCOM de 20 años con un presupuesto
    de 1.500 dólares, y el planteamiento del problema y el objetivo general.
 
-8. **Análisis 1 — Precio promedio por categoría.** Con tabla de promedio, mediana,
-   mínimo y máximo, más la revisión de valores atípicos por rango intercuartílico,
-   y un gráfico de barras.
+8. **El precio de cada categoría.** Tabla con el promedio, el precio más frecuente
+   (mediana), los valores extremos y la autonomía más común, más una comprobación de
+   que ningún precio extremo deforma el promedio, y un gráfico de barras verticales.
 
-9. **Qué puede comprar Lucy con su presupuesto.** Cuántos anuncios de cada
-   categoría quedan dentro de los 1.500 dólares, en qué rango de precio y con qué
-   autonomía, con las motos baratas detalladas una por una.
+9. **La disponibilidad dentro del presupuesto.** Cuántos anuncios de cada categoría
+   quedan dentro de los 1.500 dólares, con su rango de precio y de autonomía, en un
+   gráfico de barras horizontales, más el detalle de las seis motos accesibles.
 
-10. **Reestructuración del proyecto.** Todo el código pasó a un único archivo
+10. **La autonomía disponible dentro del presupuesto.** Rango de autonomía y valor
+    más frecuente por categoría, en un gráfico de barras horizontales con rango.
+
+11. **Reestructuración del proyecto.** Todo el código pasó a un único archivo
     (`analisis.py`), organizado por fuente de datos. El notebook quedó sin código:
     solo texto, tablas e imágenes, para que se pueda leer directamente en GitHub.
 
@@ -82,7 +85,13 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
   espacio reservado para las demás fuentes. Así se puede leer el proyecto entero
   en GitHub sin ejecutar nada, que era el problema del notebook anterior.
 - Cada análisis lleva su explicación, después la tabla, después la explicación del
-  gráfico, después el gráfico y al final un resumen con lo que se evidencia.
+  gráfico, después el gráfico y una descripción de lo que el gráfico muestra. **Las
+  conclusiones no se escriben hasta analizar todas las fuentes**, para evitar
+  anticipar un juicio con una sola fuente.
+- Se descartó el gráfico de dispersión con los 224 puntos: era ilegible. En su lugar
+  cada análisis tiene un gráfico distinto y con pocos elementos, pensado para que
+  cualquier persona pueda leerlo sin conocimientos previos.
+- El lenguaje del notebook es formal y está dirigido a un público general.
 
 **Problemas**
 
