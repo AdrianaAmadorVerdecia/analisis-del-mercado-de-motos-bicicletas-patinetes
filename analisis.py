@@ -393,7 +393,7 @@ def figura_autonomia_alcanzable(ruta: Path | None = None):
     from matplotlib.patches import Patch
     _leyenda_arriba(ax, [
         Patch(facecolor="#6B7280", edgecolor="white",
-              label="Barra clara: autonomía más común (mediana)"),
+              label="Barra sólida: autonomía más común (mediana)"),
         Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.32,
               label="Barra translúcida: rango entre el mínimo y el máximo"),
     ])

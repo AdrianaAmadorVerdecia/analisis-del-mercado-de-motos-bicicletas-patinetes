@@ -68,8 +68,8 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
 **Decisiones**
 
 - Se exigieron **marca, precio y autonomía** como datos obligatorios, pero el
-  **tipo de batería quedó opcional**: solo 1 de cada 4 anuncios lo publica, y
-  exigirlo habría dejado fuera más de la mitad del mercado.
+  **tipo de batería quedó opcional**: aunque lo publica el 70 % de los anuncios
+  (156 de 224), exigirlo habría dejado fuera los 68 restantes.
 - Los precios se guardaron convertidos a **USD** (745 CUP = 1 USD) para que las
   tres categorías sean comparables entre sí.
 - Se corrigió una marca que se detectaba mal ("Volt", que en realidad estaba
@@ -85,19 +85,11 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
   espacio reservado para las demás fuentes. Así se puede leer el proyecto entero
   en GitHub sin ejecutar nada, que era el problema del notebook anterior.
 - Cada análisis lleva su explicación, después la tabla, después la explicación del
-  gráfico, después el gráfico y una descripción de lo que el gráfico muestra. **Las
-  conclusiones no se escriben hasta analizar todas las fuentes**, para evitar
-  anticipar un juicio con una sola fuente.
+  gráfico, después el gráfico y una descripción de lo que el gráfico muestra.
 - Se descartó el gráfico de dispersión con los 224 puntos: era ilegible. En su lugar
   cada análisis tiene un gráfico distinto y con pocos elementos, pensado para que
   cualquier persona pueda leerlo sin conocimientos previos.
 - El lenguaje del notebook es formal y está dirigido a un público general.
-- Ajuste de los gráficos: las leyendas se sostienen encima del área del
-  dibujo para no tapar las barras, y el encabezado de la fuente pasó a
-  "La fuente: los anuncios de Revolico" para que no se confundiera con el del
-  primer análisis.
-- La mediana dejó de representarse con una línea sobre la barra del promedio,
-  que tapaba el valor, y pasó a ser una barra contigua a su lado.
 
 **Problemas**
 
@@ -111,14 +103,45 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
 - El primer push a GitHub falló porque el sistema usó la cuenta equivocada. Se
   fijó la cuenta de la autora solo para este repositorio, sin tocar la
   configuración global de Git.
-- Solo hay 2 anuncios de todo el conjunto que superan los 80 km de autonomía, así
-  que no alcanza para comparar "qué vehículo le conviene más" a Lucy. Esa
-  pregunta queda abierta hasta tener datos de calidad de otras fuentes.
+- **La autonomía alta es poco común dentro del presupuesto:** de los 154 anuncios
+  alcanzables, solo 3 llegan a 80 km o más. A eso se suma que el 30 % no declara
+  el tipo de batería y que ningún anuncio indica fecha. Con esta fuente no se puede
+  afirmar cuál vehículo le conviene más a Lucy; la pregunta queda abierta hasta
+  contar con datos de calidad de las demás fuentes.
 
 **Pendiente**
 
-- Revisar los dos gráficos con la autora y ajustar lo que pida.
 - Completar la lista de fuentes (Telegram, encuestas, mercados).
 - Repetir los análisis en cada fuente nueva y comparar resultados.
-- Escribir las conclusiones.
+- Escribir las conclusiones generales del estudio.
 - Actualizar `HANDS_OFF.md` con los resultados.
+
+---
+
+## 2026-10-04 — Primera fuente concluida
+
+**Qué se hizo**
+
+1. **Cierre de la fuente Revolico.** Se terminaron los tres análisis previstos
+   (precio por categoría, disponibilidad dentro de los 1.500 USD y autonomía
+   alcanzable) y se redactó el bloque **"Conclusiones de la fuente Revolico"**
+   en el notebook, que responde por primera vez a la pregunta de investigación.
+
+2. **Lo que se concluyó con esta fuente.** La categoría del vehículo es la
+   variable que explica el precio: la moto cuesta 3,2 veces la bicicleta, pero
+   dentro de cada categoría los precios son regulares y el precio por sí solo no
+   distingue calidad. Con 1.500 USD se accede a cualquier categoría (75 de 75
+   bicicletas y 73 de 74 patinetes) pero a solo 6 de 75 motos, y pagar más no
+   garantiza más autonomía: dentro del presupuesto las motos alcanzan una mediana
+   de 60 km frente a 50 km de bicicletas y patinetes.
+
+3. **Límite de esta primera fuente.** La calidad solo se puede medir a medias:
+   el 30 % de los anuncios no declara la batería, no hay fechas y los precios son
+   los solicitados por el vendedor, no los de venta. Por eso las conclusiones
+   generales del estudio siguen reservadas hasta analizar el resto de fuentes.
+
+**Decisiones**
+
+- Se adoptó el formato de **conclusiones por fuente**: cada fuente cierra con su
+  propio bloque de conclusiones, y al final se escribirán las conclusiones
+  generales que comparen todas las fuentes.
