@@ -93,10 +93,11 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
   cualquier persona pueda leerlo sin conocimientos previos.
 - El lenguaje del notebook es formal y está dirigido a un público general.
 - Ajuste de los gráficos: las leyendas se sostienen encima del área del
-  dibujo para no tapar las barras, la mediana se marcó con una línea negra con borde
-  blanco en lugar de una línea blanca que no se distinguía sobre la barra ámbar, y
-  el encabezado de la fuente pasó a "La fuente: los anuncios de Revolico" para que
-  no se confundiera con el del primer análisis.
+  dibujo para no tapar las barras, y el encabezado de la fuente pasó a
+  "La fuente: los anuncios de Revolico" para que no se confundiera con el del
+  primer análisis.
+- La mediana dejó de representarse con una línea sobre la barra del promedio,
+  que tapaba el valor, y pasó a ser una barra contigua a su lado.
 
 **Problemas**
 

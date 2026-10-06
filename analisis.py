@@ -30,7 +30,6 @@ import json
 import statistics as stat
 from pathlib import Path
 
-import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 
 # ==============================================================================
@@ -262,56 +261,49 @@ def _leyenda_arriba(ax, casos):
 # --------------------------------- graficos (revolico)
 
 def figura_precios(ruta: Path | None = None):
-    """Barras verticales: precio promedio de cada categoria, con la mediana marcada."""
+    """Barras agrupadas: precio promedio y precio mas comun de cada categoria."""
     resumen = resumen_precios()
 
     nombres = [ETIQUETAS[c] for c in ORDEN]
     promedios = [resumen[c]["promedio"] for c in ORDEN]
     medianas = [resumen[c]["mediana"] for c in ORDEN]
 
-    fig, ax = plt.subplots(figsize=(11, 7))
-    posiciones = list(range(len(nombres)))
-    ancho = 0.55
-    medio = ancho / 2
+    fig, ax = plt.subplots(figsize=(12, 7.2))
+    ancho = 0.36
+    separacion = ancho + 0.03
 
-    ax.bar(posiciones, promedios, ancho,
-           color=[COLORES[c] for c in ORDEN], edgecolor="white", linewidth=2, zorder=2)
+    colores = [COLORES[c] for c in ORDEN]
+    rango = range(len(nombres))
+    centro_promedio = [p - separacion / 2 for p in rango]
+    centro_mediana = [p + separacion / 2 for p in rango]
 
-    # marca de la mediana: linea negra que sobresale de la barra, con borde blanco
-    for p, mediana in zip(posiciones, medianas):
-        ax.plot([p - medio - 0.11, p + medio + 0.11], [mediana, mediana],
-                color="#111111", linewidth=4.5, zorder=4, solid_capstyle="butt",
-                path_effects=[pe.withStroke(linewidth=8, foreground="white")])
-        for extremo in (p - medio - 0.11, p + medio + 0.11):
-            ax.plot([extremo, extremo], [mediana - 30, mediana + 30],
-                    color="#111111", linewidth=4.5, zorder=4,
-                    path_effects=[pe.withStroke(linewidth=8, foreground="white")])
+    ax.bar(centro_promedio, promedios, ancho,
+           color=colores, edgecolor="white", linewidth=1.8, zorder=2)
+    ax.bar(centro_mediana, medianas, ancho,
+           color=colores, alpha=0.42, edgecolor=colores, linewidth=1.8, zorder=2)
 
-    for p, categoria in zip(posiciones, ORDEN):
-        r = resumen[categoria]
-        ax.text(p, r["promedio"] + 235, f"promedio  {r['promedio']:,.0f}".replace(",", "."),
+    for centro, valor in zip(centro_promedio, promedios):
+        ax.text(centro, valor + 55, f"{valor:,.0f}".replace(",", "."),
                 ha="center", fontsize=13.5, fontweight="bold", color="#111111")
-        ax.text(p, r["promedio"] + 95, f"mediana  {r['mediana']:,.0f}".replace(",", "."),
-                ha="center", fontsize=13, fontweight="bold", color="#111111")
+    for centro, valor in zip(centro_mediana, medianas):
+        ax.text(centro, valor + 55, f"{valor:,.0f}".replace(",", "."),
+                ha="center", fontsize=13.5, fontweight="bold", color="#333333")
 
-    ax.set_xticks(posiciones)
+    ax.set_xticks(list(rango))
     ax.set_xticklabels(
         [f"{n}\n{r['anuncios']} anuncios" for n, r in zip(nombres, [resumen[c] for c in ORDEN])],
         fontsize=12.5)
     ax.set_ylabel("Precio (USD)", fontsize=12.5)
-    ax.set_ylim(0, 3300)
+    ax.set_ylim(0, 2950)
     ax.tick_params(axis="y", labelsize=11.5)
     ax.set_title("Precio de las categorías de vehículos eléctricos en La Habana",
-                 fontsize=16, fontweight="bold", pad=42)
+                 fontsize=16, fontweight="bold", pad=44)
 
-    # leyenda general: barra = promedio, linea negra = mediana
-    from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
     _leyenda_arriba(ax, [
-        Patch(facecolor="#6B7280", edgecolor="white", label="Barra: precio promedio"),
-        Line2D([0], [0], color="#111111", linewidth=4.5,
-               path_effects=[pe.withStroke(linewidth=8, foreground="white")],
-               label="Línea negra: precio más común (mediana)"),
+        Patch(facecolor="#6B7280", edgecolor="white", label="Barra sólida: precio promedio"),
+        Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.42,
+              label="Barra translúcida: precio más común (mediana)"),
     ])
 
     ax.spines[["top", "right"]].set_visible(False)
