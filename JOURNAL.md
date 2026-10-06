@@ -145,3 +145,66 @@ conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
 - Se adoptó el formato de **conclusiones por fuente**: cada fuente cierra con su
   propio bloque de conclusiones, y al final se escribirán las conclusiones
   generales que comparen todas las fuentes.
+
+---
+
+## 2026-10-06 - Segunda fuente obtenida: VEDCA
+
+**Qué se hizo**
+
+1. **Reconocimiento de la fuente.** VEDCA (Vehiculos Electricos del Caribe) no
+   tiene pagina propia accesible (`vedca.cu` no resuelve): su catalogo publicado
+   esta en el marketplace de Islagrande, en
+   `islagrande.com/marketplace/seller/collection/shop/vedca/`. El sitio es
+   Magento, esta en ingles y publica los precios en euros.
+
+2. **Verificacion del catalogo.** La tienda tiene **29 productos en total**, y
+   se leen con una sola peticion (`product_list_limit=48`), sin paginar. De
+   esos 29: 14 triciclos, 7 bicicletas, 5 motos, 2 baterias y 1 neumatico.
+   **No hay ningun patinete electrico** en esta fuente.
+
+3. **Scraper (`scraper_vedca.py`).** Cuatro pasos: (a) leer el catalogo de la
+   tienda, (b) clasificar cada producto por el fragmento de su direccion web y
+   descartar lo que no es motos, bicicletas o patinetes, (c) quitar los
+   repetidos (dos bicicletas estan publicadas dos veces, una por provincia) y
+   (d) leer la ficha de cada producto con una peticion. Sin Selenium, solo
+   `requests` y expresiones regulares, con reintentos y guardado incremental
+   como el scraper de Revolico.
+
+4. **Datos extraidos de cada ficha.** tipo de vehiculo, marca, titulo, SKU, URL,
+   precio en euros, precio en dolares, disponibilidad (en stock o agotado),
+   tipo y capacidad de bateria, autonomia publicada (texto original y minimo y
+   maximo numericos cuando vienen en rango), y el diccionario completo de
+   caracteristicas tal como las publica el vendedor.
+
+5. **Dataset (`data/vedca_islagrande.json`).** 10 productos unicos: 5 motos y
+   5 bicicletas electricas. El archivo empieza con una cabecera que guarda la
+   fuente, la fecha, la moneda original (EUR), la tasa usada (1 EUR = 1,13 USD),
+   los 29 productos publicados, los 10 relevantes y el desglose de descartes;
+   despues va la lista. **Bateria en 10 de 10 y autonomia en 10 de 10**, que es
+   justo lo que falta en la primera fuente.
+
+**Decisiones**
+
+- **El sitio no tiene atributo de marca**, asi que todos los registros se guardan
+  con `marca: "VEDCA"`, que es el vendedor que los publica.
+- **Los precios se guardan en euros tal como se publican** y, aparte, convertidos
+  a USD con la tasa que fijo la autora: **1 EUR = 1,13 USD**. El sitio mismo
+  convierte a 1,1236; no se uso esa.
+- **Todo el catalogo sin repetir** (deduplicado por titulo exacto), con un tope
+  de 50 productos por fuente. Salieron 10.
+- **Los productos agotados se guardan igualmente**, con su disponibilidad: 9 de
+  los 10 estan "Out of stock" y filtrarlos habria dejado un solo registro.
+- Las caracteristicas se guardan **verbatim**, con las claves en ingles tal como
+  las publica el sitio, para no reinterpretar ni inventar nada.
+
+**Problemas**
+
+- El primer parseo se rompio porque el sitio usa `<br>` con atributos
+  (`<br data-start="56" ...>`) para separar las lineas de la descripcion: una
+  sola ficha se guardaba como un bloque gigante. Se corrigio la expresion
+  regular y ahora salen entre 19 y 25 caracteristicas por producto.
+- La autonomia "40/50 km" se leia mal (daba 50-50). Se añadio `/` a los
+  separadores de rango.
+- **Todavia no se analiza esta fuente.** El JSON queda guardado y la autora
+  decidira que analisis se hacen con el.
