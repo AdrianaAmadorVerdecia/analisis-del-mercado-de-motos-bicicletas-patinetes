@@ -1,210 +1,47 @@
 # Journal — Análisis del mercado de vehículos eléctricos en La Habana
 
-**Proyecto:** ¿Se puede construir una comparación objetiva entre precio, marca y calidad a partir de la información que los vendedores publican en sus anuncios?
+**Proyecto:** ¿Se puede construir una comparación objetiva entre precio, marca y calidad
+a partir de la información que los vendedores publican en sus anuncios?
 
-**Autora:** Adriana Amador Verdecia
-**Carrera:** Ciencia de Datos — Primer año
-**Institución:** Universidad de La Habana · Facultad de Matemática y Computación (MATCOM)
+**Autora:** Adriana Amador Verdecia · Ciencia de Datos — Primer año · MATCOM, Universidad de La Habana
 
----
-
-Este archivo es la bitácora del proyecto: aquí se registra día a día lo que se hace,
-con qué decisiones se toma y qué problemas aparecen. La idea es que alguien que no
-conozca el proyecto pueda leerlo y entender cómo se llegó al resultado final.
+Bitácora del proyecto: un resumen por día con lo que se hizo, las decisiones importantes
+y algún problema general.
 
 ---
 
-## 2026-10-04 — Día 1
+## 2026-10-04 — Fuente Revolico
 
-**Qué se hizo**
+Se definió el problema de investigación y se eligió como primera fuente el mercado
+informal Revolico. Se escribió `scraper_revolico.py`, se depuraron los anuncios y quedó
+el dataset con **224 anuncios de La Habana** (75 motos, 75 bicicletas, 74 patinetes).
+Se montó el repositorio público, se redactó en el notebook la introducción (Lucy, 20 años,
+1.500 USD) y los tres primeros análisis: precio por categoría, disponibilidad dentro del
+presupuesto y autonomía alcanzable. Todo el código pasó a `analisis.py` y el notebook quedó
+sin código, solo texto, tablas e imágenes.
 
-1. **Definición del problema de investigación.** Se busca una forma de comparar
-   precio, marca y calidad de los vehículos eléctricos anunciados en La Habana,
-   usando únicamente la información que los vendedores publican en sus anuncios.
+Se decidió guardar los precios **en USD** (745 CUP = 1 USD), exigir marca, precio y
+autonomía pero dejar la **batería opcional**, avanzar **fuente por fuente** y no hacer
+ninguna gráfica sin indicación.
+Como problema general quedó que **la autonomía alta es escasa dentro del presupuesto**
+(solo 3 de 154 alcanzables llegan a 80 km).
 
-2. **Elección de la fuente de datos.** Revolico, por ser el mercado informal
-   digital donde se publican estas ventas en Cuba.
+## 2026-10-06 — Revolico concluido y resto de "sitios web"
 
-3. **Scraper (`scraper_revolico.py`).** La web entrega sus datos estructurados
-   dentro del propio HTML (bloque `__NEXT_DATA__`), lo que permite leerlos
-   directamente sin navegador ni Selenium. De cada anuncio se extraen: título,
-   precio, moneda, provincia, descripción y URL.
+Se cerró Revolico con su bloque de conclusiones (la categoría explica el precio y con
+1.500 USD se llega a casi todo menos a las motos, solo 6 de 75). Se obtuvo VEDCA desde el
+marketplace de Islagrande: de 29 productos publicados quedaron **10 únicos (5 motos y 5
+bicicletas)**, con batería y autonomía en todos; su problema general es que casi todo
+está agotado.
 
-4. **Depuración de los datos.** De los anuncios revisados se descartaron:
-   - los que no son de la provincia de La Habana,
-   - los que no dicen marca, precio ni autonomía,
-   - los precios irreales (anzuelos de 1 USD, precios inflados),
-   - los anuncios de tiendas con varios productos,
-   - los duplicados y los anuncios mal descritos.
+CubAmerica se leyó por su API de WooCommerce y dejó **57 productos** (18 motos, 30
+bicicletas —incluidas 14 bicimotos— y 9 patinetes), con precio, batería y autonomía.
+ITENCEL, portal de clasificados mucho mayor de lo previsto, se leyó por su API de
+WordPress y quedó en **89 productos** (24 motos, 38 bicicletas, 27 patinetes); a los
+anuncios sin precio en el texto se les leyó la ficha y se extrajo el precio publicado,
+y los pocos que no lo declaran quedan honestamente sin él.
 
-5. **Dataset final (`data/anuncios_revolico.json`).** 224 anuncios de La Habana:
-   75 motos eléctricas, 75 bicicletas eléctricas y 74 patinetes eléctricos.
-   156 de los 224 (70 %) mencionan el tipo de batería.
-
-6. **Documentación y publicación.** Se escribieron `README.md` y `HANDS_OFF.md`,
-   y se creó el repositorio público
-   `AdrianaAmadorVerdecia/analisis-del-mercado-de-motos-bicicletas-patinetes`
-   con el script, los datos y la documentación.
-
-7. **Historia y problemática** del proyecto. Se escribió la introducción del
-   notebook: el caso de Lucy, estudiante de MATCOM de 20 años con un presupuesto
-   de 1.500 dólares, y el planteamiento del problema y el objetivo general.
-
-8. **El precio de cada categoría.** Tabla con el promedio, el precio más frecuente
-   (mediana), los valores extremos y la autonomía más común, más una comprobación de
-   que ningún precio extremo deforma el promedio, y un gráfico de barras verticales.
-
-9. **La disponibilidad dentro del presupuesto.** Cuántos anuncios de cada categoría
-   quedan dentro de los 1.500 dólares, con su rango de precio y de autonomía, en un
-   gráfico de barras horizontales, más el detalle de las seis motos accesibles.
-
-10. **La autonomía disponible dentro del presupuesto.** Rango de autonomía y valor
-    más frecuente por categoría, en un gráfico de barras horizontales con rango.
-
-11. **Reestructuración del proyecto.** Todo el código pasó a un único archivo
-    (`analisis.py`), organizado por fuente de datos. El notebook quedó sin código:
-    solo texto, tablas e imágenes, para que se pueda leer directamente en GitHub.
-
-**Decisiones**
-
-- Se exigieron **marca, precio y autonomía** como datos obligatorios, pero el
-  **tipo de batería quedó opcional**: aunque lo publica el 70 % de los anuncios
-  (156 de 224), exigirlo habría dejado fuera los 68 restantes.
-- Los precios se guardaron convertidos a **USD** (745 CUP = 1 USD) para que las
-  tres categorías sean comparables entre sí.
-- Se corrigió una marca que se detectaba mal ("Volt", que en realidad estaba
-  leyendo el voltaje de la batería) y se eliminó un anuncio que estaba repetido
-  en dos categorías.
-- **El proyecto se hará fuente por fuente.** Antes de analizar cada fuente se
-  pregunta qué análisis tiene sentido, y **ninguna gráfica se hace hasta que la
-  autora indique cuál y cómo**.
-- Como en Revolico no se conoce la calidad real del producto, el primer análisis
-  se centró en el precio y no en la autonomía, que es el dato que más se publica.
-- **El notebook no lleva código.** Todo vive en un único archivo, `analisis.py`,
-  dividido por secciones: configuración, utilidades, fuente 1 (Revolico) y un
-  espacio reservado para las demás fuentes. Así se puede leer el proyecto entero
-  en GitHub sin ejecutar nada, que era el problema del notebook anterior.
-- Cada análisis lleva su explicación, después la tabla, después la explicación del
-  gráfico, después el gráfico y una descripción de lo que el gráfico muestra.
-- Se descartó el gráfico de dispersión con los 224 puntos: era ilegible. En su lugar
-  cada análisis tiene un gráfico distinto y con pocos elementos, pensado para que
-  cualquier persona pueda leerlo sin conocimientos previos.
-- El lenguaje del notebook es formal y está dirigido a un público general.
-
-**Problemas**
-
-- La web falla la conexión con frecuencia: se añadieron reintentos y guardado
-  parcial para no perder el trabajo ya hecho.
-- El script inicial no encontraba la autonomía cuando el anuncio usaba tildes
-  ("Autonomía") y detectaba marcas falsos a partir del voltaje.
-- **No hay salida a PyPI desde la conexión actual**, así que `pandas` no se pudo
-  instalar. Todo quedó escrito con la biblioteca estándar (`json`, `statistics`)
-  y `matplotlib`, que ya estaba instalado.
-- El primer push a GitHub falló porque el sistema usó la cuenta equivocada. Se
-  fijó la cuenta de la autora solo para este repositorio, sin tocar la
-  configuración global de Git.
-- **La autonomía alta es poco común dentro del presupuesto:** de los 154 anuncios
-  alcanzables, solo 3 llegan a 80 km o más. A eso se suma que el 30 % no declara
-  el tipo de batería y que ningún anuncio indica fecha. Con esta fuente no se puede
-  afirmar cuál vehículo le conviene más a Lucy; la pregunta queda abierta hasta
-  contar con datos de calidad de las demás fuentes.
-
-**Pendiente**
-
-- Completar la lista de fuentes (Telegram, encuestas, mercados).
-- Repetir los análisis en cada fuente nueva y comparar resultados.
-- Escribir las conclusiones generales del estudio.
-- Actualizar `HANDS_OFF.md` con los resultados.
-
----
-
-## 2026-10-04 — Primera fuente concluida
-
-**Qué se hizo**
-
-1. **Cierre de la fuente Revolico.** Se terminaron los tres análisis previstos
-   (precio por categoría, disponibilidad dentro de los 1.500 USD y autonomía
-   alcanzable) y se redactó el bloque **"Conclusiones de la fuente Revolico"**
-   en el notebook, que responde por primera vez a la pregunta de investigación.
-
-2. **Lo que se concluyó con esta fuente.** La categoría del vehículo es la
-   variable que explica el precio: la moto cuesta 3,2 veces la bicicleta, pero
-   dentro de cada categoría los precios son regulares y el precio por sí solo no
-   distingue calidad. Con 1.500 USD se accede a cualquier categoría (75 de 75
-   bicicletas y 73 de 74 patinetes) pero a solo 6 de 75 motos, y pagar más no
-   garantiza más autonomía: dentro del presupuesto las motos alcanzan una mediana
-   de 60 km frente a 50 km de bicicletas y patinetes.
-
-3. **Límite de esta primera fuente.** La calidad solo se puede medir a medias:
-   el 30 % de los anuncios no declara la batería, no hay fechas y los precios son
-   los solicitados por el vendedor, no los de venta. Por eso las conclusiones
-   generales del estudio siguen reservadas hasta analizar el resto de fuentes.
-
-**Decisiones**
-
-- Se adoptó el formato de **conclusiones por fuente**: cada fuente cierra con su
-  propio bloque de conclusiones, y al final se escribirán las conclusiones
-  generales que comparen todas las fuentes.
-
----
-
-## 2026-10-06 - Segunda fuente obtenida: VEDCA
-
-**Qué se hizo**
-
-1. **Reconocimiento de la fuente.** VEDCA (Vehiculos Electricos del Caribe) no
-   tiene pagina propia accesible (`vedca.cu` no resuelve): su catalogo publicado
-   esta en el marketplace de Islagrande, en
-   `islagrande.com/marketplace/seller/collection/shop/vedca/`. El sitio es
-   Magento, esta en ingles y publica los precios en euros.
-
-2. **Verificacion del catalogo.** La tienda tiene **29 productos en total**, y
-   se leen con una sola peticion (`product_list_limit=48`), sin paginar. De
-   esos 29: 14 triciclos, 7 bicicletas, 5 motos, 2 baterias y 1 neumatico.
-   **No hay ningun patinete electrico** en esta fuente.
-
-3. **Scraper (`scraper_vedca.py`).** Cuatro pasos: (a) leer el catalogo de la
-   tienda, (b) clasificar cada producto por el fragmento de su direccion web y
-   descartar lo que no es motos, bicicletas o patinetes, (c) quitar los
-   repetidos (dos bicicletas estan publicadas dos veces, una por provincia) y
-   (d) leer la ficha de cada producto con una peticion. Sin Selenium, solo
-   `requests` y expresiones regulares, con reintentos y guardado incremental
-   como el scraper de Revolico.
-
-4. **Datos extraidos de cada ficha.** tipo de vehiculo, marca, titulo, SKU, URL,
-   precio en euros, precio en dolares, disponibilidad (en stock o agotado),
-   tipo y capacidad de bateria, autonomia publicada (texto original y minimo y
-   maximo numericos cuando vienen en rango), y el diccionario completo de
-   caracteristicas tal como las publica el vendedor.
-
-5. **Dataset (`data/vedca_islagrande.json`).** 10 productos unicos: 5 motos y
-   5 bicicletas electricas. El archivo empieza con una cabecera que guarda la
-   fuente, la fecha, la moneda original (EUR), la tasa usada (1 EUR = 1,13 USD),
-   los 29 productos publicados, los 10 relevantes y el desglose de descartes;
-   despues va la lista. **Bateria en 10 de 10 y autonomia en 10 de 10**, que es
-   justo lo que falta en la primera fuente.
-
-**Decisiones**
-
-- **El sitio no tiene atributo de marca**, asi que todos los registros se guardan
-  con `marca: "VEDCA"`, que es el vendedor que los publica.
-- **Los precios se guardan en euros tal como se publican** y, aparte, convertidos
-  a USD con la tasa que fijo la autora: **1 EUR = 1,13 USD**. El sitio mismo
-  convierte a 1,1236; no se uso esa.
-- **Todo el catalogo sin repetir** (deduplicado por titulo exacto), con un tope
-  de 50 productos por fuente. Salieron 10.
-- **Los productos agotados se guardan igualmente**, con su disponibilidad: 9 de
-  los 10 estan "Out of stock" y filtrarlos habria dejado un solo registro.
-- Las caracteristicas se guardan **verbatim**, con las claves en ingles tal como
-  las publica el sitio, para no reinterpretar ni inventar nada.
-
-**Problemas**
-
-- El primer parseo se rompio porque el sitio usa `<br>` con atributos
-  (`<br data-start="56" ...>`) para separar las lineas de la descripcion: una
-  sola ficha se guardaba como un bloque gigante. Se corrigio la expresion
-  regular y ahora salen entre 19 y 25 caracteristicas por producto.
-- La autonomia "40/50 km" se leia mal (daba 50-50). Se añadio `/` a los
-  separadores de rango.
-- **Todavia no se analiza esta fuente.** El JSON queda guardado y la autora
-  decidira que analisis se hacen con el.
+Se decidió que **las bicimotos cuentan como bicicleta eléctrica**, guardar la marca de
+VEDCA, convertir los precios de EUR a USD (1,13) y limitar cada fuente a 50 por tipo de
+vehículo. Como problema general, iTENCEL no publica fechas ni todos sus anuncios traen
+precio en el texto. Las fuentes de hoy quedan sin analizar su comparación.
