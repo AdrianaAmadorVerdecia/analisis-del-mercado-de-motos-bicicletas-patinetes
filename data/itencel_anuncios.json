@@ -3,679 +3,900 @@
   "url": "https://itencel.com/anuncio-categoria/vehiculos/",
   "fecha": "2026-10-06",
   "moneda_original": "mayoria en USD; algunos en CUP (tasa 745 CUP = 1 USD)",
-  "anuncios_escaneados": 292,
-  "productos_relevantes": 89,
-  "descartados_por_tipo": {
-    "No electrico / fuera de alcance": 203
-  },
+  "anuncios_escaneados": 298,
+  "productos_relevantes": 129,
+  "descartados_por_tipo": {},
   "productos": [
-    {
-      "marca": "Fenih",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 2550.0,
-      "bateria": "35 Ah"
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 111.0,
-      "bateria": "LIFE P04 – 12 VOLT 100 AMP- = 280$ – 12 VOLT 200AMP = 500$ – 12 VOLT 3"
-    },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2250.0,
-      "bateria": "60 Volt / 30 Ah",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "60V / 30Ah"
     },
     {
       "marca": "Topmaq",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2850.0,
-      "bateria": "Marca TOPMAQ Motor 3000 w Batería 72 vol 45 Amp Autonomía 120 km Caja",
-      "autonomia_km": "120 km Caja reguladora Votol EM -50",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "45Ah"
     },
     {
       "marca": "Topmaq",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 3000.0,
-      "bateria": "72 Volt / 45 Ah",
-      "autonomia_km": "100-120km ,caja VOTOL EM-50 , alarma y música por Bluetooth",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 1250.0,
-      "bateria": "60 Volt / 20 Ah",
-      "autonomia_km": "60-70 km Alarma, full luces led y 3 velocidades y marcha atr",
-      "autonomia_min_km": 60,
-      "autonomia_max_km": 70
+      "autonomia_max_km": 70,
+      "bateria": "60V / 20Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 1250.0,
-      "bateria": "LiFePO4 ✔ Motor 600W ✔ Tres velocidades ✔ Papeles para chapa ★1250 USD",
-      "autonomia_km": "BICIMOTO VEDCA ✔ ✔ Hasta 90 km por carga ✔ Batería LiFePO4 ✔",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
-    },
-    {
-      "marca": "Vedca",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 1250.0,
+      "autonomia_max_km": 90,
       "bateria": "LiFePO4"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2500.0,
-      "bateria": "60 Volt / 60 Ah",
-      "autonomia_km": "125-140 KM",
-      "autonomia_min_km": 125,
-      "autonomia_max_km": 140
-    },
-    {
-      "marca": "Topmaq",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 2850.0,
-      "bateria": "de litio antiexplosiva"
-    },
-    {
-      "marca": "5Th Wheel",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 540.0,
-      "bateria": "de 36V 7.8Ah proporciona una buena autonomía para el día a día"
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": null
+      "autonomia_max_km": 140,
+      "bateria": "60V / 60Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 3000.0,
-      "bateria": "Tipo: Litio",
-      "autonomia_km": "máxima: 120 km por carga Sistema de Ruedas y Frenos",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
-    },
-    {
-      "marca": "Bucatti",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 2900.0,
-      "bateria": "de litio antiexplosiva ☑️Hasta 120 km de autonomía ☑️caja VOTOL 50 ☑️V"
-    },
-    {
-      "marca": "Vedca",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": null,
-      "bateria": "de litio antiexplosiva LIFEP04 (Lito)",
-      "autonomia_km": "120 km",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "Litio / 72V / 45Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2750.0,
-      "bateria": "de litio antiexplosiva",
-      "autonomia_km": "120 km",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 50Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 780.0,
-      "bateria": "de gel 48V 20Ah 🔥Acelerador de puño ⏰️Alarma integrada 📢 Bocina integr",
-      "autonomia_km": "30 – 40KM ( depende de las condiciones, peso , terreno , ace",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 40
-    },
-    {
-      "marca": "5Th Wheel",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 540.0,
-      "bateria": "de 36V 7.8Ah proporciona una buena autonomía para el día a día"
+      "autonomia_max_km": 40,
+      "bateria": "gel / 48V / 20Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 100.0,
-      "bateria": "para Bicicleta Eléctrica – 36V 6Ah Integrada"
-    },
-    {
-      "marca": "5Th Wheel",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 540.0,
-      "bateria": "de 36V 7.8Ah proporciona una buena autonomía para el día a día"
+      "precio_usd": 5900.0,
+      "autonomia_max_km": 110
     },
     {
       "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 550.0,
+      "autonomia_max_km": 70,
+      "bateria": "48V / 15Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3250.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3000.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2760.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 50Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3220.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2600.0,
+      "autonomia_max_km": 100,
+      "bateria": "LITHIUM / 72V / 40Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2900.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 50Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2660.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2680.0,
+      "autonomia_max_km": 100,
+      "bateria": "72V / 35Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2950.0,
+      "autonomia_max_km": 120,
+      "bateria": "LITHIUM / 72V / 45Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2900.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Panda",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2800.0,
+      "autonomia_max_km": 85,
+      "bateria": "LITHIUM / 72V / 32Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2950.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Volt X",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 1100.0,
+      "autonomia_max_km": 60,
+      "bateria": "litio / 48V / 20Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3000.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 1800.0,
+      "autonomia_max_km": 80,
+      "bateria": "Gel / 20.3Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2920.0,
+      "autonomia_max_km": 100,
+      "bateria": "72V / 40Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2700.0,
+      "autonomia_max_km": 120,
+      "bateria": "LITHIUM / 72V / 45Ah"
+    },
+    {
+      "marca": "Izuki",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3300.0,
+      "autonomia_max_km": 100,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2650.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 300.0,
+      "autonomia_max_km": 30,
+      "bateria": "48V / 20Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 4450.0,
+      "autonomia_max_km": 72,
+      "bateria": "48V / 15Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3150.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2600.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2600.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2300.0,
+      "autonomia_max_km": 80,
+      "bateria": "LITHIUM / 60V / 30Ah"
+    },
+    {
+      "marca": "Panda",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2650.0,
+      "autonomia_max_km": 90,
+      "bateria": "72V / 32Ah"
+    },
+    {
+      "marca": "Panda",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2450.0,
+      "autonomia_max_km": 90,
+      "bateria": "72V / 30Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2850.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3350.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2880.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 3200.0,
+      "autonomia_max_km": 120,
+      "bateria": "72V / 45Ah"
+    },
+    {
+      "marca": "Vedca",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2100.0,
-      "bateria": "de litio LiFePo4 ✔ Motor electrico 2000W ✔ Bluetooth ✔ Sistema de segu"
-    },
-    {
-      "marca": "Jj9",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 700.0,
-      "bateria": "de 60V-20AH 50km por carga. Este scooter eléctrico presenta un diseño",
-      "autonomia_km": "50 km",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 50
+      "autonomia_max_km": 100,
+      "bateria": "litio / 60V / 30Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 700.0,
-      "bateria": "Batería de 60V-20AH 50km por carga. Este scooter eléctrico presenta un",
-      "autonomia_km": "50 km",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 50
+      "precio_usd": 2850.0,
+      "autonomia_max_km": 100,
+      "bateria": "72V / 35Ah"
     },
     {
-      "marca": "Jj9",
+      "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 700.0,
-      "bateria": "y sin batería MOTO ELECTRICA JJ9 DE 1500 WATTS Batería de 60V-20AH 50k",
-      "autonomia_km": "50 km",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 50
+      "precio_usd": 2850.0,
+      "autonomia_max_km": 100,
+      "bateria": "72V / 40Ah"
     },
     {
-      "marca": "5Th Wheel",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 540.0,
-      "bateria": "36V 7.8Ah para buena autonomía diaria. 🚲 Ruedas de 14″ ideales para ci"
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2900.0,
+      "autonomia_max_km": 120,
+      "bateria": "Litio / 60V / 60Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 1850.0,
+      "autonomia_max_km": 70,
+      "bateria": "Lithium / 60V / 20Ah"
+    },
+    {
+      "marca": "Topmaq",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 2900.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 45Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 750.0,
+      "autonomia_max_km": 60,
+      "bateria": "gel / 48V / 20Ah"
+    },
+    {
+      "marca": "Viento Rapido",
+      "tipo_vehiculo": "Moto electrica",
+      "precio_usd": 4600.0,
+      "autonomia_max_km": 90,
+      "bateria": "gel / 72V / 32Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1200.0,
-      "bateria": "48 V/15 Ah ✅️VELOCIDAD MÁXIMA: 40-55 KM/H ✅️AUTONOMÍA: 90 KM (DEPENDIE",
-      "autonomia_km": "40-70 km (DEPENDIENDO DEL NIVEL DE ASISTENCIA) ✅️TIEMPO DE C",
-      "autonomia_min_km": 40,
-      "autonomia_max_km": 70
-    },
-    {
-      "marca": "Rayo",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": null
+      "autonomia_max_km": 70,
+      "bateria": "litio / 48V / 15Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 600.0,
-      "bateria": "36 Volt / 12 Ah",
-      "autonomia_km": "30-35km, frenos de disco trasero y delantero, full luces LED",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 35
+      "autonomia_max_km": 35,
+      "bateria": "36V / 12Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 800.0,
-      "bateria": "48 Volt / 10,5 Ah",
-      "autonomia_km": "50km y full luces led Incluye 2 juegos de llaves, cargador i",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 50
+      "autonomia_max_km": 50,
+      "bateria": "48V / 10.5Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1300.0,
-      "bateria": "48 Volt / 15 Ah",
-      "autonomia_km": "90 KM(Dependiendo del nivel asistencia) Tiempo de carga de 6",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "48V / 15Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1250.0,
-      "bateria": "LiFePo4 48V-30AH ✔ Hasta 90 km por carga ✔ Sistema de alarma ✔ Retroce",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 600.0
+      "autonomia_max_km": 90,
+      "bateria": "LiFePo4 / 48V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 5900.0,
-      "bateria": "Litio / 60 Volt / 90 Ah",
-      "autonomia_km": "110 km",
-      "autonomia_min_km": 110,
-      "autonomia_max_km": 110
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 500.0
+      "autonomia_max_km": 110,
+      "bateria": "Litio / 60V / 90Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1250.0,
-      "bateria": "de litio 48V / 30Ah (LiFePO4Mn) – Duradera",
-      "autonomia_km": "80km por carga ✅Peso Neto: 38 kg ✅ Llantas sin cámara 14” x",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 80
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 4800.0
+      "autonomia_max_km": 80,
+      "bateria": "litio / 48V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 5900.0,
-      "autonomia_km": "hasta 110 km. Panel solar incluido. Garantía 6 meses. Sin pa",
-      "autonomia_min_km": 110,
       "autonomia_max_km": 110
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 5900.0,
-      "bateria": "LiFePO4 60V-90AH. Autonomía de 90 a 110 km. Factura incluida. Garantía",
-      "autonomia_km": "90 a 110 km. Factura incluida. Garantía 6 meses",
-      "autonomia_min_km": 110,
-      "autonomia_max_km": 110
+      "autonomia_max_km": 110,
+      "bateria": "LiFePO4 / 60V / 90Ah"
     },
     {
       "marca": "Bucatti",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 700.0,
-      "autonomia_km": "130 km Precio: 2800 USD 🛵 HALCON Autonomía: 120 km Precio: 1",
-      "autonomia_min_km": 130,
       "autonomia_max_km": 130
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 650.0,
-      "bateria": "de Litio Desmontable de 48V 10Ah"
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": null
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": null,
-      "bateria": "Litio (nuevo) Voltaje nominal 48V Voltaje de carga 54V Corriente de ca"
+      "autonomia_max_km": 72,
+      "bateria": "Litio / 48V / 10Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 600.0,
-      "bateria": "48 Volt / 10 Ah",
-      "autonomia_km": "40Km y frenos de disco trasero Incluye 2 juegos de llaves, c",
-      "autonomia_min_km": 40,
-      "autonomia_max_km": 40
+      "autonomia_max_km": 40,
+      "bateria": "48V / 10Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 550.0
+      "precio_usd": 780.0,
+      "autonomia_max_km": 40,
+      "bateria": "litio / 36V / 10.4Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": null
+      "precio_usd": 1380.0,
+      "autonomia_max_km": 100,
+      "bateria": "48V / 15Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 520.0
+      "precio_usd": 2050.0,
+      "autonomia_max_km": 130,
+      "bateria": "48V / 50Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1620.0
+      "precio_usd": 5900.0,
+      "autonomia_max_km": 110,
+      "bateria": "LiFePO4"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 7000.0,
+      "autonomia_max_km": 120,
+      "bateria": "LiFePO4 / 60V / 90Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1070.0,
+      "autonomia_max_km": 70,
+      "bateria": "48V / 22Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 700.0
+      "precio_usd": 2500.0,
+      "autonomia_max_km": 40,
+      "bateria": "gel / 25Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 250.0,
-      "bateria": "de litio para bicicleta electrica de 48v y 15ah"
+      "precio_usd": 850.0,
+      "autonomia_max_km": 70,
+      "bateria": "60Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1200.0
+      "precio_usd": 600.0,
+      "autonomia_max_km": 51,
+      "bateria": "48V / 10Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 540.0
+      "precio_usd": 550.0,
+      "autonomia_max_km": 45,
+      "bateria": "LITIO / 48V / 10Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 300.0
+      "precio_usd": 750.0,
+      "autonomia_max_km": 64
     },
     {
-      "marca": "5Th Wheel",
+      "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 540.0,
-      "bateria": "36V 7.8Ah para buena autonomía diaria 🛞 Ruedas de 14” para diseño comp"
+      "precio_usd": 780.0,
+      "autonomia_max_km": 50
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 100,
+      "bateria": "gel / 58Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1400.0,
-      "bateria": "48V 20Ah (960Wh) removible ‎ ‎⚡ Motor: eléctrico de alta potencia ‎ ‎🚴",
-      "autonomia_km": "aproximadamente 70 millas (112 km) por carga ‎ ‎⏱️ Tiempo de",
-      "autonomia_min_km": 112,
-      "autonomia_max_km": 112
+      "autonomia_max_km": 112,
+      "bateria": "48V / 20Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 540.0,
-      "bateria": "36v",
-      "autonomia_km": "30 km Velocidad 20 a 25 km/h Luces delanteras PRECIO: 500 us",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 30
+      "precio_usd": 1270.0,
+      "autonomia_max_km": 72,
+      "bateria": "48V / 15Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 500.0,
-      "bateria": "36v",
-      "autonomia_km": "30 km Velocidad 20 a 25 km/h Luces delanteras PRECIO: 500 us",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 30
+      "precio_usd": 2450.0,
+      "autonomia_max_km": 30,
+      "bateria": "gel / 25Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 600.0,
-      "bateria": "de Litio de alta eficiencia (48V 10.4Ah). 🛑 Seguridad total: Frenos de"
+      "precio_usd": 750.0,
+      "autonomia_max_km": 90,
+      "bateria": "48V / 10.4Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1150.0,
-      "bateria": "DE LITHIUM 🎁INCLUYE: cargador inteligente, 2 juegos de llaves 🧾PAPELES",
-      "autonomia_km": "70–90 km",
-      "autonomia_min_km": 70,
-      "autonomia_max_km": 90
+      "precio_usd": 1000.0,
+      "autonomia_max_km": 65,
+      "bateria": "48V"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 120,
+      "bateria": "LifePo4 / 60V / 90Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 4800.0,
+      "autonomia_max_km": 60,
+      "bateria": "150Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1250.0,
+      "autonomia_max_km": 90,
+      "bateria": "litio"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 100,
+      "bateria": "LifePo4 / 60V / 90Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1260.0,
+      "autonomia_max_km": 80,
+      "bateria": "litio / 48V / 30Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1100.0,
-      "bateria": "de litio",
-      "autonomia_km": "70–90 km",
-      "autonomia_min_km": 70,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 80,
+      "bateria": "gel / 60V / 20Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1250.0,
+      "autonomia_max_km": 90,
+      "bateria": "LiFePo4 / 48V / 30Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 800.0,
-      "bateria": "de 17.5Ah para recorrer aproximadamente de 51 a 70 km con una sola car",
-      "autonomia_km": "70 km",
-      "autonomia_min_km": 70,
-      "autonomia_max_km": 70
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 60V / 90Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 580.0,
-      "bateria": "48v..10.4 A Velocidad 20 MPH Autonomía 30 KM Accesorios..Candado",
-      "autonomia_km": "30 KM Accesorios..Candado ,Cesta y Portacelular Precio 580 u",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 30
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 120,
+      "bateria": "litio / 60V / 90Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 250.0
+      "precio_usd": 5000.0,
+      "autonomia_max_km": 120,
+      "bateria": "LiFePo4"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 550.0,
+      "autonomia_max_km": 48,
+      "bateria": "lib / 48V"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1030.0,
+      "autonomia_max_km": 60,
+      "bateria": "litio / 48V / 22Ah"
+    },
+    {
+      "marca": "Volt X",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1040.0,
+      "autonomia_max_km": 60,
+      "bateria": "litio / 48V / 20Ah"
+    },
+    {
+      "marca": "Bucatti",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 1050.0,
+      "autonomia_max_km": 70,
+      "bateria": "48V / 22Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 4850.0,
+      "autonomia_max_km": 70,
+      "bateria": "gel / 60V / 58Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 2000.0,
+      "autonomia_max_km": 120,
+      "bateria": "Litio / 48V / 50Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 540.0,
+      "autonomia_max_km": 30,
+      "bateria": "LITIO / 36V / 12Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 500.0,
+      "autonomia_max_km": 100,
+      "bateria": "48V / 15Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 500.0,
+      "autonomia_max_km": 100,
+      "bateria": "48V / 15Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Bicicleta electrica",
+      "precio_usd": 560.0,
+      "autonomia_max_km": 60,
+      "bateria": "Lithium / 48V / 10Ah"
     },
     {
       "marca": "5Th Wheel",
       "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": null,
-      "bateria": "48V: buena autonomía para uso diario. 📏 Alcance: hasta 30-50 millas en",
-      "autonomia_km": "hasta 37km 🔹 Diseño plegable: práctico para transportar o gu",
-      "autonomia_min_km": 37,
-      "autonomia_max_km": 37
+      "precio_usd": 4450.0,
+      "autonomia_max_km": 37,
+      "bateria": "lib / 48V / 7.8Ah"
     },
     {
       "marca": "Ele-008",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 600.0,
-      "bateria": "de 48V 13 Ah",
-      "autonomia_km": "30 km, Doble Frenos de Disco, M5 Elite Colores Disponibles B",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 30
+      "autonomia_max_km": 30,
+      "bateria": "48V / 13Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 350.0,
-      "bateria": "lib",
-      "autonomia_km": "hasta 37km Diseño plegable: práctico para transportar o guar",
-      "autonomia_min_km": 37,
-      "autonomia_max_km": 37
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 600.0
+      "autonomia_max_km": 37,
+      "bateria": "lib"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 350.0,
-      "bateria": "4 Ah",
-      "autonomia_km": "hasta 15-20 km por carga ✅ Tiempo de carga aproximado de 4 a",
-      "autonomia_min_km": 15,
-      "autonomia_max_km": 20
+      "autonomia_max_km": 20,
+      "bateria": "4Ah"
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 820.0,
+      "autonomia_max_km": 40,
+      "bateria": "LITHIUM / 48V / 12Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 350.0,
-      "bateria": "lib",
-      "autonomia_km": "hasta 37 km por carga 🧳 Diseño plegable para fácil transport",
-      "autonomia_min_km": 37,
-      "autonomia_max_km": 37
+      "autonomia_max_km": 37,
+      "bateria": "lib"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 290.0,
-      "autonomia_km": "35km con un período de carga de 5 horas PRECIO 290USD Contac",
-      "autonomia_min_km": 35,
       "autonomia_max_km": 35
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 350.0,
-      "bateria": "lib",
-      "autonomia_km": "hasta 37km Diseño plegable: práctico para transportar o guar",
-      "autonomia_min_km": 37,
-      "autonomia_max_km": 37
+      "autonomia_max_km": 37,
+      "bateria": "lib"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 780.0,
+      "autonomia_max_km": 50,
+      "bateria": "litio / 48V / 12Ah"
+    },
+    {
+      "marca": "Caroma",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 540.0,
+      "autonomia_max_km": 48
     },
     {
       "marca": "Volpam",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 500.0,
-      "bateria": "42 Volt / 14.5 Ah",
-      "autonomia_km": "45KM con velocidad máxima de 35 kilómetros por horas en prue",
-      "autonomia_min_km": 45,
-      "autonomia_max_km": 45
-    },
-    {
-      "marca": "Volpam",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 500.0,
-      "bateria": "42 Volt / 14.5 Ah",
-      "autonomia_km": "45KM con velocidad máxima de 35 kilómetros por horas en prue",
-      "autonomia_min_km": 45,
-      "autonomia_max_km": 45
+      "autonomia_max_km": 45,
+      "bateria": "42V / 14.5Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 2250.0,
-      "bateria": "LiFePo4 / 60 Volt / 30 Ah"
+      "precio_usd": 800.0,
+      "autonomia_max_km": 40,
+      "bateria": "48V / 20Ah"
+    },
+    {
+      "marca": "Volpam",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 500.0,
+      "autonomia_max_km": 45,
+      "bateria": "42V / 14.5Ah"
     },
     {
       "marca": "Volpam",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 600.0,
-      "bateria": "42 Volt / 14.5 Ah",
-      "autonomia_km": "45KM con velocidad máxima de 35 kilómetros por horas en prue",
-      "autonomia_min_km": 45,
-      "autonomia_max_km": 45
+      "autonomia_max_km": 45,
+      "bateria": "42V / 14.5Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 350.0,
-      "autonomia_km": "hasta 37 km 📦 Diseño plegable: práctico para transportar y g",
-      "autonomia_min_km": 37,
       "autonomia_max_km": 37
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 290.0,
-      "autonomia_km": "35km con un período de carga de 5 horas",
-      "autonomia_min_km": 35,
+      "autonomia_max_km": 35
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 350.0,
+      "autonomia_max_km": 25
+    },
+    {
+      "marca": "Generica",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 290.0,
       "autonomia_max_km": 35
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 290.0,
-      "autonomia_km": "35km .Período de carga de 5 horas PRECIO 290USD Recogida en",
-      "autonomia_min_km": 35,
       "autonomia_max_km": 35
     },
     {
-      "marca": "Generica",
+      "marca": "Halcon",
       "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 290.0,
-      "autonomia_km": "35km con un período de carga de 5 horas PRECIO 290USD",
-      "autonomia_min_km": 35,
-      "autonomia_max_km": 35
+      "precio_usd": 870.0,
+      "autonomia_max_km": 60,
+      "bateria": "GEL / 48V / 20Ah"
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 4450.0,
+      "autonomia_max_km": 90,
+      "bateria": "litio / 48V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 2200.0,
-      "bateria": "LIFEPO4 72V-30AH DE LARGA DURACION. ✔AUTONOMIA APROXIMADA DE 80-100 KM",
-      "autonomia_km": "APROXIMADA DE 80-100 KM. ✔MOTOR 2000W POTENTE. ♦BLUETOOTH. ♦",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 100
-    },
-    {
-      "marca": "Vedca",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": null,
-      "bateria": "de litio antiexplosiva 48V-30AH. ✔Motor 600W potente y silencioso. ♦Si",
-      "autonomia_km": "⚡ ✔Hasta 80-90 KM por carga. ✔Bateria de litio antiexplosiva",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 90
-    },
-    {
-      "marca": "Vedca",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": null,
-      "bateria": "LIFEPO4 60V-30AH. ✔AUTONOMIA HASTA 100 KM. ✔BLUETOOTH. ♦ALARMA DE SEGU",
-      "autonomia_km": "HASTA 100 KM. ✔BLUETOOTH. ♦ALARMA DE SEGURIDAD. ♦RETROCESO",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
+      "autonomia_max_km": 100,
+      "bateria": "LIFEPO4 / 72V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 1250.0,
-      "bateria": "de Litio LiPo4 48V-30AH antiexplosiva. Recorrido aproximado de 80-90 k",
-      "autonomia_km": "80–90 km",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "Litio / 48V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": null,
-      "bateria": "de Litio 48V-30AH. ✔Motor 600W economico y eficiente. ♦Incluye alarma",
-      "autonomia_km": "entre 80 y 90 KM por carga. ✔Bateria de Litio 48V-30AH. ✔Mot",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 90
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 2200.0,
-      "bateria": "LiFePo4 ✔ Sistema antirrobo ✔ Bluetooth ✔ Retroceso ✔ Motor 2000W ✔ Ga"
+      "precio_usd": 4450.0,
+      "autonomia_max_km": 90,
+      "bateria": "Litio / 48V / 30Ah"
     },
     {
       "marca": "Vedca",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 2200.0,
-      "bateria": "de litio LiFePo4 30AH antiexplosiva ✔ Motor electrico 2000W ✔ Hasta 10",
-      "autonomia_km": "100 km",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
-    },
-    {
-      "marca": "Vedca",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 2200.0,
-      "bateria": "LiFePo4 / 60 Volt / 30 Ah"
+      "autonomia_max_km": 100,
+      "bateria": "litio / 30Ah"
     },
     {
       "marca": "Volpam",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 600.0,
-      "bateria": "42 Volt / 15.5 Ah",
-      "autonomia_km": "45KM con velocidad máxima de 35 kilómetros por horas en prue",
-      "autonomia_min_km": 45,
-      "autonomia_max_km": 45
+      "autonomia_max_km": 45,
+      "bateria": "42V / 15.5Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 330.0,
-      "autonomia_km": "35km con un período de carga de 5 horas",
-      "autonomia_min_km": 35,
       "autonomia_max_km": 35
+    },
+    {
+      "marca": "Vedca",
+      "tipo_vehiculo": "Patinete electrico",
+      "precio_usd": 830.0,
+      "autonomia_max_km": 40,
+      "bateria": "litio / 48V / 20Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 350.0
+      "precio_usd": 840.0,
+      "autonomia_max_km": 60,
+      "bateria": "gel / 48V / 20Ah"
     }
-  ]
+  ],
+  "total_originales": 129
 }

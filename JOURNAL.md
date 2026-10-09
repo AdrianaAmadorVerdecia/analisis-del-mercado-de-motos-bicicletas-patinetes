@@ -26,22 +26,17 @@ ninguna gráfica sin indicación.
 Como problema general quedó que **la autonomía alta es escasa dentro del presupuesto**
 (solo 3 de 154 alcanzables llegan a 80 km).
 
-## 2026-10-06 — Revolico concluido y resto de "sitios web"
+## 2026-10-06 — Primera fuente INTERNET
 
-Se cerró Revolico con su bloque de conclusiones (la categoría explica el precio y con
-1.500 USD se llega a casi todo menos a las motos, solo 6 de 75). Se obtuvo VEDCA desde el
-marketplace de Islagrande: de 29 productos publicados quedaron **10 únicos (5 motos y 5
-bicicletas)**, con batería y autonomía en todos; su problema general es que casi todo
-está agotado.
+Se amplió la primera fuente a **Internet** con los tres portales principales:
+Revolico (224), CubAmerica (43) e iTENCEL (129), todos con marca, precio y
+autonomía (batería opcional). Se arregló un bug de paginación de iTENCEL.
 
-CubAmerica se leyó por su API de WooCommerce y dejó **57 productos** (18 motos, 30
-bicicletas —incluidas 14 bicimotos— y 9 patinetes), con precio, batería y autonomía.
-ITENCEL, portal de clasificados mucho mayor de lo previsto, se leyó por su API de
-WordPress y quedó en **89 productos** (24 motos, 38 bicicletas, 27 patinetes); a los
-anuncios sin precio en el texto se les leyó la ficha y se extrajo el precio publicado,
-y los pocos que no lo declaran quedan honestamente sin él.
+Se reestructuraron los análisis **por sitio**: tabla resumen, precio promedio por
+tipo, lo que cabe en el presupuesto de Lucy (1.500 USD) y un análisis general de
+autonomía al final, para comparar los portales con el mismo criterio. Total:
+**396 productos** (140 motos, 148 bicicletas, 108 patinetes).
 
-Se decidió que **las bicimotos cuentan como bicicleta eléctrica**, guardar la marca de
-VEDCA, convertir los precios de EUR a USD (1,13) y limitar cada fuente a 50 por tipo de
-vehículo. Como problema general, iTENCEL no publica fechas ni todos sus anuncios traen
-precio en el texto. Las fuentes de hoy quedan sin analizar su comparación.
+VEDCA (Islagrande) queda fuera de esta fuente, como mercado aparte. Pendiente:
+autonomía de los 14 de CubAmerica sin publicar. Decisión: las bicimotos cuentan
+como bicicleta eléctrica y todo se expresa en USD (745 CUP = 1 USD).

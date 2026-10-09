@@ -4,9 +4,11 @@
 Este es el UNICO archivo de codigo del proyecto. Aqi dentro se va metiendo todo,
 organizado por secciones:
 
-    CONFIGURACION GENERAL     constantes, colores, etiquetas
+    CONFIGURACION GENERAL     constantes, colores, etiquetas, sitios
     UTILIDADES               formato de numeros y tablas de markdown
-    FUENTE 1: REVOLICO       carga de datos, calculos, tablas y graficos
+    PRIMERA FUENTE: INTERNET  los tres sitios (Revolico, CubAmerica, iTENCEL):
+                             tabla de resumen y tres graficos. VEDCA quedó fuera
+                             de internet para usarse luego como mercado aparte.
     OTRAS FUENTES            Telegram, encuestas, mercados (mas adelante)
 
 El notebook `proyecto.ipynb` NO tiene codigo: solo importa desde aqui y muestra
@@ -16,7 +18,7 @@ Uso desde el notebook:
 
     from analisis import *
 
-    print(tabla_precios())
+    print(tabla_resumen_markdown())
     ejecutar()
 
 Uso desde la terminal:
@@ -50,100 +52,53 @@ ETIQUETAS = {
     "Patinete electrico": "Patinete eléctrico",
 }
 
-# Colores vivos y separados entre si, para que se distingan de un vistazo.
-COLORES = {
-    "Moto electrica": "#E63946",
-    "Bicicleta electrica": "#1D6FE0",
-    "Patinete electrico": "#F9A602",
+# Cada sitio de la primera fuente: donde viven sus datos y que campos usar.
+SITIOS = (
+    {
+        "slug": "revolico",
+        "nombre": "Revolico",
+        "archivo": "anuncios_revolico.json",
+        "lista": "anuncios",
+        "precio": "precio",
+        "autonomia": "autonomia_km",
+        "moneda": "CUP a USD (745 = 1)",
+    },
+    {
+        "slug": "cubamerica",
+        "nombre": "CubAmerica",
+        "archivo": "cubamerica_envios.json",
+        "lista": "productos",
+        "precio": "precio_usd",
+        "autonomia": "autonomia_max_km",
+        "moneda": "USD",
+    },
+    {
+        "slug": "itencel",
+        "nombre": "iTENCEL",
+        "archivo": "itencel_anuncios.json",
+        "lista": "productos",
+        "precio": "precio_usd",
+        "autonomia": "autonomia_max_km",
+        "moneda": "mayoría en USD",
+    },
+)
+
+DICC_SITIOS = {s["slug"]: s for s in SITIOS}
+
+# Color por sitio, usado en los tres graficos.
+COLOR_SITIOS = {
+    "revolico": "#E63946",
+    "vedca": "#1D6FE0",
+    "cubamerica": "#10B981",
+    "itencel": "#F9A602",
 }
-COLOR_FUERA = "#C9CDD2"      # anuncios que Lucy no puede comprar
+COLOR_FUERA = "#C9CDD2"
 COLOR_PRESUPUESTO = "#E63946"
-COLOR_MEDIANA = "#2B2B2B"
 
 
 # ==============================================================================
 # UTILIDADES
 # ==============================================================================
-
-# ==============================================================================
-# FUENTE 1: REVOLICO  (data/anuncios_revolico.json)
-# ==============================================================================
-
-RUTA_DATOS_REVOLICO = RAIZ / "data" / "anuncios_revolico.json"
-
-
-def cargar_anuncios() -> list[dict]:
-    """Devuelve la lista de anuncios del JSON de Revolico."""
-    with open(RUTA_DATOS_REVOLICO, encoding="utf-8") as f:
-        return json.load(f)["anuncios"]
-
-
-def grupo(categoria: str, anuncios: list[dict] | None = None) -> list[dict]:
-    """Devuelve los anuncios de una categoria."""
-    anuncios = cargar_anuncios() if anuncios is None else anuncios
-    return [a for a in anuncios if a["tipo_vehiculo"] == categoria]
-
-
-def alcanzables(categoria: str, anuncios: list[dict] | None = None) -> list[dict]:
-    """Anuncios de la categoria que caben en el presupuesto de Lucy."""
-    return [a for a in grupo(categoria, anuncios) if a["precio"] <= PRESUPUESTO_LUCY]
-
-
-# --------------------------------- calculos estadisticos (revolico)
-
-def resumen_precios(anuncios: list[dict] | None = None) -> dict[str, dict]:
-    """Numero de anuncios, promedio, mediana, minimo, maximo y desviacion por categoria."""
-    anuncios = cargar_anuncios() if anuncios is None else anuncios
-    resumen = {}
-    for categoria in ORDEN:
-        precios = [a["precio"] for a in grupo(categoria, anuncios)]
-        autonomias = [a["autonomia_km"] for a in grupo(categoria, anuncios)]
-        resumen[categoria] = {
-            "anuncios": len(precios),
-            "promedio": stat.mean(precios),
-            "mediana": stat.median(precios),
-            "minimo": min(precios),
-            "maximo": max(precios),
-            "desviacion": stat.pstdev(precios),
-            "autonomia_mediana": stat.median(autonomias),
-        }
-    return resumen
-
-
-def valores_atipicos(valores: list[float]) -> list[float]:
-    """Valores fuera del rango intercuartilico (regla de 1.5 x IQR)."""
-    q1, q3 = stat.quantiles(valores, n=4)[0], stat.quantiles(valores, n=4)[2]
-    limite = 1.5 * (q3 - q1)
-    return [v for v in valores if v < q1 - limite or v > q3 + limite]
-
-
-def resumen_presupuesto(anuncios: list[dict] | None = None) -> dict[str, dict]:
-    """Que se puede comprar con el presupuesto de Lucy, categoria por categoria."""
-    anuncios = cargar_anuncios() if anuncios is None else anuncios
-    resumen = {}
-    for categoria in ORDEN:
-        todos = grupo(categoria, anuncios)
-        dentro = alcanzables(categoria, anuncios)
-        fila = {"anuncios": len(todos), "alcanzables": len(dentro)}
-        if dentro:
-            precios = [a["precio"] for a in dentro]
-            autonomias = [a["autonomia_km"] for a in dentro]
-            fila.update({
-                "precio_min": min(precios),
-                "precio_mediana": stat.median(precios),
-                "autonomia_min": min(autonomias),
-                "autonomia_mediana": stat.median(autonomias),
-                "autonomia_max": max(autonomias),
-            })
-        else:
-            fila.update({k: None for k in (
-                "precio_min", "precio_mediana",
-                "autonomia_min", "autonomia_mediana", "autonomia_max")})
-        resumen[categoria] = fila
-    return resumen
-
-
-# --------------------------------- tablas en markdown (revolico)
 
 def _formato(valor, decimales: int = 0) -> str:
     """Formatea un numero con separador de miles y coma decimal."""
@@ -166,85 +121,144 @@ def tabla_markdown(encabezados: list[str], filas: list[list[str]]) -> str:
     return "\n".join(lineas)
 
 
-def tabla_precios_markdown(anuncios: list[dict] | None = None) -> str:
-    """Tabla de precio por categoria."""
-    resumen = resumen_precios(anuncios)
-    filas = []
+# ==============================================================================
+# PRIMERA FUENTE: INTERNET  (los tres sitios)
+# ==============================================================================
+
+def cargar_sitio(sitio: dict) -> list[dict]:
+    """Devuelve la lista de productos del sitio indicado."""
+    ruta = RAIZ / "data" / sitio["archivo"]
+    with open(ruta, encoding="utf-8") as f:
+        return json.load(f)[sitio["lista"]]
+
+
+def _precio(sitio, producto):
+    return producto[sitio["precio"]]
+
+
+def _autonomia(sitio, producto):
+    return producto[sitio["autonomia"]]
+
+
+def grupo_de(sitio: dict, categoria: str,
+             productos: list[dict] | None = None) -> list[dict]:
+    """Productos de un sitio que pertenecen a una categoria."""
+    productos = cargar_sitio(sitio) if productos is None else productos
+    return [p for p in productos if p["tipo_vehiculo"] == categoria]
+
+
+def alcanzables_de(sitio: dict, categoria: str,
+                   productos: list[dict] | None = None) -> list[dict]:
+    """Productos del sitio que caben en el presupuesto de Lucy."""
+    return [p for p in grupo_de(sitio, categoria, productos)
+            if _precio(sitio, p) <= PRESUPUESTO_LUCY]
+
+
+# --------------------------------- calculos estadisticos
+
+def resumen_precios(sitio: dict) -> dict[str, dict]:
+    """Promedio, mediana, minimo y maximo del precio por categoria."""
+    productos = cargar_sitio(sitio)
+    resumen = {}
     for categoria in ORDEN:
-        r = resumen[categoria]
+        precios = [_precio(sitio, p) for p in grupo_de(sitio, categoria, productos)]
+        if not precios:
+            resumen[categoria] = {"anuncios": 0}
+            continue
+        resumen[categoria] = {
+            "anuncios": len(precios),
+            "promedio": stat.mean(precios),
+            "mediana": stat.median(precios),
+            "minimo": min(precios),
+            "maximo": max(precios),
+        }
+    return resumen
+
+
+def resumen_presupuesto(sitio: dict) -> dict[str, dict]:
+    """Que puede comprar Lucy con su presupuesto en este sitio, por categoria."""
+    productos = cargar_sitio(sitio)
+    resumen = {}
+    for categoria in ORDEN:
+        todos = grupo_de(sitio, categoria, productos)
+        dentro = alcanzables_de(sitio, categoria, productos)
+        fila = {"anuncios": len(todos), "alcanzables": len(dentro)}
+        if dentro:
+            precios = sorted(_precio(sitio, p) for p in dentro)
+            autonomias = sorted(int(_autonomia(sitio, p)) for p in dentro)
+            fila.update({
+                "precio_min": min(precios),
+                "precio_mediana": stat.median(precios),
+                "precio_max": max(precios),
+                "autonomia_min": min(autonomias),
+                "autonomia_mediana": stat.median(autonomias),
+                "autonomia_max": max(autonomias),
+            })
+        else:
+            fila.update({k: None for k in (
+                "precio_min", "precio_mediana", "precio_max",
+                "autonomia_min", "autonomia_mediana", "autonomia_max")})
+        resumen[categoria] = fila
+    return resumen
+
+
+def resumen_alcance_general() -> list[dict]:
+    """Por sitio: productos dentro del presupuesto y la autonomia del conjunto."""
+    filas = []
+    for sitio in SITIOS:
+        dentro = [p for p in cargar_sitio(sitio)
+                  if _precio(sitio, p) <= PRESUPUESTO_LUCY]
+        autonomias = sorted(int(_autonomia(sitio, p)) for p in dentro)
+        fila = {
+            "slug": sitio["slug"],
+            "nombre": sitio["nombre"],
+            "total": len(cargar_sitio(sitio)),
+            "alcanzables": len(dentro),
+        }
+        if dentro:
+            fila.update({
+                "autonomia_min": autonomias[0],
+                "autonomia_promedio": stat.mean(autonomias),
+                "autonomia_mediana": stat.median(autonomias),
+                "autonomia_max": autonomias[-1],
+            })
+        else:
+            fila.update({"autonomia_min": None, "autonomia_promedio": None,
+                         "autonomia_mediana": None, "autonomia_max": None})
+        filas.append(fila)
+    return filas
+
+
+# --------------------------------- tabla de resumen (la unica del cuaderno)
+
+def tabla_resumen_markdown() -> str:
+    """Una sola tabla con lo esencial: promedio por tipo, lo que cabe en el
+    presupuesto y la autonomia alcanzable de cada sitio."""
+    alcance = {f["slug"]: f for f in resumen_alcance_general()}
+    filas = []
+    for sitio in SITIOS:
+        rp = resumen_precios(sitio)
+        al = alcance[sitio["slug"]]
         filas.append([
-            ETIQUETAS[categoria],
-            str(r["anuncios"]),
-            _formato(r["promedio"]),
-            _formato(r["mediana"]),
-            _formato(r["minimo"]),
-            _formato(r["maximo"]),
-            _formato(r["autonomia_mediana"]),
+            sitio["nombre"],
+            str(al["total"]),
+            f"**{al['alcanzables']}**",
+            _formato(rp["Moto electrica"].get("promedio")),
+            _formato(rp["Bicicleta electrica"].get("promedio")),
+            _formato(rp["Patinete electrico"].get("promedio")),
+            _formato(al["autonomia_promedio"]),
+            _formato(al["autonomia_max"]),
         ])
     return tabla_markdown(
-        ["Categoría", "Anuncios", "Precio promedio", "Precio más común (mediana)",
-         "Precio más bajo", "Precio más alto", "Autonomía más común (km)"],
+        ["Sitio", "Productos", "Caben en 1.500 USD", "Moto (prom. USD)",
+         "Bicicleta (prom. USD)", "Patinete (prom. USD)",
+         "Autonomía promedio alcanzable (km)", "Autonomía máxima alcanzable (km)"],
         filas,
     )
 
 
-def tabla_atipicos_markdown(anuncios: list[dict] | None = None) -> str:
-    """Tabla que muestra si hay precios extremos que deformen el promedio."""
-    anuncios = cargar_anuncios() if anuncios is None else anuncios
-    filas = []
-    for categoria in ORDEN:
-        precios = [a["precio"] for a in grupo(categoria, anuncios)]
-        atipicos = valores_atipicos(precios)
-        sin_atipicos = [p for p in precios if p not in atipicos]
-        filas.append([
-            ETIQUETAS[categoria],
-            str(len(atipicos)),
-            _formato(stat.mean(precios)),
-            _formato(stat.mean(sin_atipicos)),
-            (f"{stat.mean(sin_atipicos) - stat.mean(precios):+,.0f}"
-             .replace(",", ".")).replace("+", "+").replace("-", "−"),
-        ])
-    return tabla_markdown(
-        ["Categoría", "Precios extremos", "Promedio", "Promedio sin extremos", "Diferencia"],
-        filas,
-    )
+# --------------------------------- graficos
 
-
-def tabla_presupuesto_markdown(anuncios: list[dict] | None = None) -> str:
-    """Tabla de lo que Lucy puede comprar con su presupuesto."""
-    resumen = resumen_presupuesto(anuncios)
-    filas = []
-    for categoria in ORDEN:
-        r = resumen[categoria]
-        filas.append([
-            ETIQUETAS[categoria],
-            str(r["anuncios"]),
-            f"**{r['alcanzables']}**",
-            _formato(r["precio_min"]),
-            _formato(r["precio_mediana"]),
-            _formato(r["autonomia_min"]),
-            _formato(r["autonomia_mediana"]),
-            _formato(r["autonomia_max"]),
-        ])
-    return tabla_markdown(
-        ["Categoría", "Anuncios publicados", "Anuncios que puede comprar",
-         "Precio más bajo", "Precio más común", "Autonomía mínima (km)",
-         "Autonomía más común (km)", "Autonomía más alta (km)"],
-        filas,
-    )
-
-
-def tabla_motos_alcanzables_markdown(anuncios: list[dict] | None = None) -> str:
-    """Las motos baratas, que son el caso interesante dentro del presupuesto."""
-    dentro = sorted(alcanzables("Moto electrica", anuncios), key=lambda a: a["precio"])
-    filas = [
-        [_formato(a["precio"]), str(a["autonomia_km"]), a["marca"]]
-        for a in dentro
-    ]
-    return tabla_markdown(["Precio (USD)", "Autonomía (km)", "Marca"], filas)
-
-
-# --------------------------------- graficos (revolico)
 def _guardar(fig, ruta: Path | None):
     if ruta is not None:
         fig.savefig(ruta, dpi=150, bbox_inches="tight")
@@ -254,56 +268,47 @@ def _guardar(fig, ruta: Path | None):
 
 def _leyenda_arriba(ax, casos):
     """Leyenda horizontal colocada encima del area del grafico."""
-    ax.legend(handles=casos, frameon=False, fontsize=12.5,
-              loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2)
+    ax.legend(handles=casos, frameon=False, fontsize=11.5,
+              loc="lower center", bbox_to_anchor=(0.5, 1.01), ncol=4)
 
 
-# --------------------------------- graficos (revolico)
-
-def figura_precios(ruta: Path | None = None):
-    """Barras agrupadas: precio promedio y precio mas comun de cada categoria."""
-    resumen = resumen_precios()
-
-    nombres = [ETIQUETAS[c] for c in ORDEN]
-    promedios = [resumen[c]["promedio"] for c in ORDEN]
-    medianas = [resumen[c]["mediana"] for c in ORDEN]
-
-    fig, ax = plt.subplots(figsize=(12, 7.2))
-    ancho = 0.36
-    separacion = ancho + 0.03
-
-    colores = [COLORES[c] for c in ORDEN]
-    rango = range(len(nombres))
-    centro_promedio = [p - separacion / 2 for p in rango]
-    centro_mediana = [p + separacion / 2 for p in rango]
-
-    ax.bar(centro_promedio, promedios, ancho,
-           color=colores, edgecolor="white", linewidth=1.8, zorder=2)
-    ax.bar(centro_mediana, medianas, ancho,
-           color=colores, alpha=0.42, edgecolor=colores, linewidth=1.8, zorder=2)
-
-    for centro, valor in zip(centro_promedio, promedios):
-        ax.text(centro, valor + 55, f"{valor:,.0f}".replace(",", "."),
-                ha="center", fontsize=13.5, fontweight="bold", color="#111111")
-    for centro, valor in zip(centro_mediana, medianas):
-        ax.text(centro, valor + 55, f"{valor:,.0f}".replace(",", "."),
-                ha="center", fontsize=13.5, fontweight="bold", color="#333333")
-
-    ax.set_xticks(list(rango))
-    ax.set_xticklabels(
-        [f"{n}\n{r['anuncios']} anuncios" for n, r in zip(nombres, [resumen[c] for c in ORDEN])],
-        fontsize=12.5)
-    ax.set_ylabel("Precio (USD)", fontsize=12.5)
-    ax.set_ylim(0, 2950)
-    ax.tick_params(axis="y", labelsize=11.5)
-    ax.set_title("Precio de las categorías de vehículos eléctricos en La Habana",
-                 fontsize=16, fontweight="bold", pad=44)
-
+def figura_precios_promedio(ruta: Path | None = None):
+    """G1. Barras agrupadas: precio promedio por tipo, un grupo por sitio."""
     from matplotlib.patches import Patch
+
+    tipos = orden_con_productos()
+    x = list(range(len(tipos)))
+    ancho = 0.2
+    maximo = 0
+
+    fig, ax = plt.subplots(figsize=(11.5, 6.4))
+    for i, sitio in enumerate(SITIOS):
+        rp = resumen_precios(sitio)
+        valores = [rp[c].get("promedio") if rp[c].get("anuncios") else None
+                   for c in tipos]
+        maximo = max([maximo] + [v for v in valores if v is not None] or [0])
+        centros = [xi + (i - 1.5) * ancho for xi in x]
+        presentes = [(xx, v) for xx, v in zip(centros, valores) if v is not None]
+        if not presentes:
+            continue
+        ax.bar([xx for xx, _ in presentes], [v for _, v in presentes],
+               ancho, color=COLOR_SITIOS[sitio["slug"]],
+               edgecolor="white", linewidth=1.6, zorder=3)
+        for xx, v in presentes:
+            ax.text(xx, v + 55, f"{v:,.0f}".replace(",", "."),
+                    ha="center", fontsize=9.5, color="#111111")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels([ETIQUETAS[c] for c in tipos], fontsize=12.5)
+    ax.set_ylabel("Precio promedio (USD)", fontsize=12.5)
+    ax.set_ylim(0, maximo * 1.18)
+    ax.tick_params(axis="y", labelsize=11)
+    ax.set_title("Precio promedio por tipo de vehículo en los tres sitios",
+                 fontsize=16, fontweight="bold", pad=40)
+
     _leyenda_arriba(ax, [
-        Patch(facecolor="#6B7280", edgecolor="white", label="Barra sólida: precio promedio"),
-        Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.42,
-              label="Barra translúcida: precio más común (mediana)"),
+        Patch(facecolor=COLOR_SITIOS[s["slug"]], edgecolor="white",
+              label=s["nombre"]) for s in SITIOS
     ])
 
     ax.spines[["top", "right"]].set_visible(False)
@@ -313,38 +318,40 @@ def figura_precios(ruta: Path | None = None):
 
 
 def figura_disponibilidad(ruta: Path | None = None):
-    """Barras horizontales: cuantos anuncios puede comprar Lucy en cada categoria."""
-    resumen = resumen_presupuesto()
+    """G2. Barras horizontales: lo que cabe en el presupuesto frente al total."""
+    from matplotlib.patches import Patch
 
-    nombres = [ETIQUETAS[c] for c in ORDEN]
-    alcanzables = [resumen[c]["alcanzables"] for c in ORDEN]
-    totales = [resumen[c]["anuncios"] for c in ORDEN]
+    filas = resumen_alcance_general()
+    nombres = [f["nombre"] for f in filas]
+    totales = [f["total"] for f in filas]
+    alcanzables = [f["alcanzables"] for f in filas]
     posiciones = list(range(len(nombres)))
 
-    fig, ax = plt.subplots(figsize=(11, 5.6))
-
-    ax.barh(posiciones, alcanzables, 0.55,
-            color=[COLORES[c] for c in ORDEN], edgecolor="white", linewidth=2, zorder=3)
+    fig, ax = plt.subplots(figsize=(11, 5.4))
     ax.barh(posiciones, totales, 0.55,
             color="white", edgecolor="#9CA3AF", linewidth=2, hatch="///", zorder=2)
+    ax.barh(posiciones, alcanzables, 0.55,
+            color=[COLOR_SITIOS[f["slug"]] for f in filas],
+            edgecolor="white", linewidth=2, zorder=3)
 
-    for p, (n_alcanzable, n_total) in enumerate(zip(alcanzables, totales)):
-        ax.text(n_alcanzable + 2.5, p, f"{n_alcanzable} de {n_total} anuncios",
-                va="center", fontsize=13, fontweight="bold")
+    for p, n_dentro, n_total in zip(posiciones, alcanzables, totales):
+        ax.text(n_dentro + (max(totales) * 0.02), p,
+                f"{n_dentro} de {n_total}", va="center", fontsize=13,
+                fontweight="bold")
 
     ax.set_yticks(posiciones)
     ax.set_yticklabels(nombres, fontsize=13)
-    ax.set_xlabel("Número de anuncios", fontsize=12.5)
+    ax.set_xlabel("Número de productos", fontsize=12.5)
     ax.set_xlim(0, max(totales) * 1.28)
     ax.tick_params(axis="x", labelsize=11.5)
-    ax.set_title(f"Anuncios al alcance de un presupuesto de {PRESUPUESTO_LUCY} USD",
-                 fontsize=16, fontweight="bold", pad=44)
+    ax.set_title(f"Productos que caben en el presupuesto de {PRESUPUESTO_LUCY} USD "
+                 "en cada sitio", fontsize=16, fontweight="bold", pad=44)
 
-    from matplotlib.patches import Patch
     _leyenda_arriba(ax, [
-        Patch(facecolor="#6B7280", edgecolor="white", label="Barra sólida: anuncios que puede comprar"),
+        Patch(facecolor="#6B7280", edgecolor="white",
+              label="Barra sólida: productos dentro del presupuesto"),
         Patch(facecolor="white", edgecolor="#9CA3AF", hatch="///",
-              label="Barra rayada: anuncios publicados en total"),
+              label="Barra rayada: productos publicados en total"),
     ])
 
     ax.spines[["top", "right"]].set_visible(False)
@@ -353,47 +360,54 @@ def figura_disponibilidad(ruta: Path | None = None):
     return _guardar(fig, ruta)
 
 
-def figura_autonomia_alcanzable(ruta: Path | None = None):
-    """Barras horizontales con rango: autonomia que se compra dentro del presupuesto."""
-    resumen = resumen_presupuesto()
+def figura_alcance_general(ruta: Path | None = None):
+    """G3. Barras por sitio: autonomia alcanzable y su promedio con el presupuesto."""
+    from matplotlib.patches import Patch
 
-    nombres = [ETIQUETAS[c] for c in ORDEN]
-    minimos = [resumen[c]["autonomia_min"] or 0 for c in ORDEN]
-    medianas = [resumen[c]["autonomia_mediana"] or 0 for c in ORDEN]
-    maximos = [resumen[c]["autonomia_max"] or 0 for c in ORDEN]
+    filas = resumen_alcance_general()
+    nombres = [f["nombre"] for f in filas]
+    minimos = [f["autonomia_min"] or 0 for f in filas]
+    promedios = [f["autonomia_promedio"] or 0 for f in filas]
+    maximos = [f["autonomia_max"] or 0 for f in filas]
+    alcanzables = [f["alcanzables"] for f in filas]
+    totales = [f["total"] for f in filas]
     posiciones = list(range(len(nombres)))
 
     fig, ax = plt.subplots(figsize=(11, 5.6))
-
-    for p, categoria, vmin, vmed, vmax in zip(
-            posiciones, ORDEN, minimos, medianas, maximos):
-        color = COLORES[categoria]
-        # rango completo: del minimo al maximo
+    for p, slug, vmin, vmed, vmax, n_dentro, n_total in zip(
+            posiciones, [f["slug"] for f in filas], minimos, promedios, maximos,
+            alcanzables, totales):
+        color = COLOR_SITIOS[slug]
+        if n_dentro == 0:
+            ax.text(3, p, "sin productos dentro del presupuesto", va="center",
+                    fontsize=12.5, color="#6B7280")
+            continue
         ax.barh(p, vmax - vmin, 0.42, left=vmin,
                 color=color, alpha=0.32, edgecolor=color, linewidth=1.6, zorder=2)
-        # barra desde cero hasta la mediana
         ax.barh(p, vmed, 0.42, color=color, edgecolor="white", linewidth=2, zorder=3)
-        # marca de la mediana
-        ax.plot([vmed, vmed], [p - 0.29, p + 0.29], color="white", linewidth=4, zorder=4)
-
+        ax.plot([vmed, vmed], [p - 0.29, p + 0.29], color="white", linewidth=4,
+                zorder=4, alpha=0.85)
         ax.text(vmax + 3, p, f"{vmin:.0f} – {vmax:.0f} km", va="center",
                 fontsize=12, fontweight="bold", color=color)
-        ax.text(vmed / 2, p, f"{vmed:.0f} km", va="center", ha="center",
-                fontsize=13, fontweight="bold", color="white", zorder=5)
+        ax.text(vmed / 2, p, f"promedio {vmed:.0f} km", va="center", ha="center",
+                fontsize=12.5, fontweight="bold", color="white", zorder=5)
 
     ax.set_yticks(posiciones)
-    ax.set_yticklabels(nombres, fontsize=13)
+    ax.set_yticklabels(
+        [f"{nombre} ({n_dentro} de {n_total})"
+         for nombre, n_dentro, n_total in zip(nombres, alcanzables, totales)],
+        fontsize=13)
     ax.set_xlabel("Autonomía (km)", fontsize=12.5)
-    ax.set_xlim(0, max(maximos) * 1.32)
-    ax.set_ylim(-0.6, len(ORDEN) - 0.4)
+    ax.set_xlim(0, max(maximos) * 1.32 if max(maximos) else 1)
+    ax.set_ylim(-0.6, len(nombres) - 0.4)
     ax.tick_params(axis="x", labelsize=11.5)
-    ax.set_title(f"Autonomía disponible dentro del presupuesto de {PRESUPUESTO_LUCY} USD",
-                 fontsize=16, fontweight="bold", pad=44)
+    ax.set_title("Hasta dónde llega Lucy con su presupuesto de "
+                 f"{PRESUPUESTO_LUCY} USD en cada sitio (autonomía alcanzable)",
+                 fontsize=16, fontweight="bold", pad=52)
 
-    from matplotlib.patches import Patch
     _leyenda_arriba(ax, [
         Patch(facecolor="#6B7280", edgecolor="white",
-              label="Barra sólida: autonomía más común (mediana)"),
+              label="Barra sólida: autonomía promedio de lo que entra en el presupuesto"),
         Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.32,
               label="Barra translúcida: rango entre el mínimo y el máximo"),
     ])
@@ -404,18 +418,32 @@ def figura_autonomia_alcanzable(ruta: Path | None = None):
     return _guardar(fig, ruta)
 
 
+def orden_con_productos() -> list[str]:
+    """Tipos que aparecen en al menos un sitio."""
+    con_datos = []
+    for c in ORDEN:
+        for sitio in SITIOS:
+            rp = resumen_precios(sitio)
+            if rp[c].get("anuncios"):
+                con_datos.append(c)
+                break
+    return con_datos
+
+
 def ejecutar():
-    """Genera y guarda todos los graficos del proyecto."""
+    """Genera y guarda los tres graficos de la primera fuente (INTERNET)."""
     CARPETA_GRAFICOS.mkdir(exist_ok=True)
-    figura_precios(CARPETA_GRAFICOS / "precios_categoria.png")
-    figura_disponibilidad(CARPETA_GRAFICOS / "alcance_presupuesto.png")
-    figura_autonomia_alcanzable(CARPETA_GRAFICOS / "autonomia_alcanzable.png")
+    figura_precios_promedio(CARPETA_GRAFICOS / "precios_promedio_sitios.png")
+    figura_disponibilidad(CARPETA_GRAFICOS / "disponibilidad_presupuesto.png")
+    figura_alcance_general(CARPETA_GRAFICOS / "autonomia_alcance_sitios.png")
     return CARPETA_GRAFICOS
 
 
 # ==============================================================================
 # OTRAS FUENTES
 #   Telegram, encuestas a personas y mercados de vehiculos electricos.
+#   VEDCA (Islagrande) quedo fuera de la primera fuente y se usara mas
+#   adelante como un mercado aparte.
 #   Aqui se van anadiendo sus datos y sus analisis, en el mismo archivo.
 # ==============================================================================
 
@@ -424,14 +452,5 @@ if __name__ == "__main__":
     destino = ejecutar()
     print("Gráficos guardados en:", destino)
     print()
-    print("PRECIOS POR CATEGORÍA")
-    print(tabla_precios_markdown())
-    print()
-    print("PRECIOS EXTREMOS")
-    print(tabla_atipicos_markdown())
-    print()
-    print("PRESUPUESTO DE LUCY")
-    print(tabla_presupuesto_markdown())
-    print()
-    print("MOTOS ALCANZABLES")
-    print(tabla_motos_alcanzables_markdown())
+    print("TABLA DE RESUMEN DE LOS TRES SITIOS")
+    print(tabla_resumen_markdown())

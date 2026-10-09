@@ -7,481 +7,312 @@
     "motos-electricas": "Motos electricas",
     "bicicletas-electricas": "Scooter y Bicicletas electricas"
   },
-  "productos_relevantes": 57,
+  "productos_relevantes": 43,
   "descartados_por_tipo": {
-    "Triciclo": 2
+    "Sin marca/precio/autonomia": 14
   },
   "productos": [
-    {
-      "marca": "Windone",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 2000.0,
-      "bateria": "Litio 48V 22.5Ah"
-    },
-    {
-      "marca": "Windone",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 2000.0,
-      "bateria": "Litio 48V 22.5Ah"
-    },
     {
       "marca": "Halcon",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2300.0,
-      "bateria": "de litio de 72V 55AH",
-      "autonomia_km": "120 km",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 55Ah"
     },
     {
       "marca": "Raptor",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2300.0,
-      "bateria": "72 Volt / 45 Ah",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "72V / 45Ah"
     },
     {
       "marca": "Topmaq",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2600.0,
-      "bateria": "72 Volt / 45 Ah",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "72V / 45Ah"
     },
     {
       "marca": "Bucatti",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2500.0,
-      "bateria": "72 Volt / 45 Ah",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
-    },
-    {
-      "marca": "Fly Racing",
-      "tipo_vehiculo": "Moto electrica",
-      "precio_usd": 3600.0,
-      "bateria": "72v 86amp"
+      "autonomia_max_km": 90,
+      "bateria": "72V / 45Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2370.0,
-      "bateria": "Tipo: Litio",
-      "autonomia_km": "máxima: 120 km por carga Sistema de Ruedas y Frenos",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "Litio"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2299.0,
-      "bateria": "Lithium 72 v / 45 ah Cargador ac 110V / salida 72V/5A Tiempo de carga",
-      "autonomia_km": "100 km",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
+      "autonomia_max_km": 100,
+      "bateria": "Lithium / 72V / 45Ah"
     },
     {
       "marca": "Leopard",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 3100.0,
-      "bateria": "1 batería = 72V 56AH",
-      "autonomia_km": "140km",
-      "autonomia_min_km": 140,
-      "autonomia_max_km": 140
+      "autonomia_max_km": 140,
+      "bateria": "72V / 56Ah"
     },
     {
       "marca": "Rhynox",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2750.0,
-      "bateria": "72V 56AH",
-      "autonomia_km": "140km",
-      "autonomia_min_km": 140,
-      "autonomia_max_km": 140
+      "autonomia_max_km": 140,
+      "bateria": "72V / 56Ah"
     },
     {
       "marca": "Halcon",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2500.0,
-      "bateria": "de litio de alta capacidad (72V 70Ah)",
-      "autonomia_km": "hasta 120 km por carga. Su sistema de frenos de disco delant",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "litio / 72V / 70Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 3199.0,
-      "bateria": "Tipo: Batería de litio Voltaje: 96V Capacidad: 60AH Control y Carga Co",
-      "autonomia_km": "máxima: Hasta 150 km por carga Conectividad: Bluetooth integ",
-      "autonomia_min_km": 150,
-      "autonomia_max_km": 150
+      "autonomia_max_km": 150,
+      "bateria": "litio / 96V / 60Ah"
     },
     {
       "marca": "Panther",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2650.0,
-      "bateria": "72V/45AH 1500 Ciclos",
-      "autonomia_km": "110 km",
-      "autonomia_min_km": 110,
-      "autonomia_max_km": 110
+      "autonomia_max_km": 110,
+      "bateria": "72V / 45Ah"
     },
     {
       "marca": "Volt-X",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 1900.0,
-      "bateria": "Litio",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "Litio"
     },
     {
       "marca": "Fly Racing",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2500.0,
-      "bateria": "Litio",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "Litio"
     },
     {
       "marca": "Fly Racing",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2550.0,
-      "bateria": "Litio",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "Litio"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Moto electrica",
       "precio_usd": 2575.0,
-      "bateria": "Litio 72V 50AH",
-      "autonomia_km": "máxima: 150 km",
-      "autonomia_min_km": 150,
-      "autonomia_max_km": 150
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 1120.0,
-      "bateria": "48V 18 AH"
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 689.0,
-      "bateria": "36V 10.44 Ah"
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 1250.0,
-      "bateria": "48V 13AH"
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 799.0,
-      "bateria": "36V 7.8 Ah"
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1700.0,
-      "bateria": "48V 20 Ah"
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1285.0,
-      "bateria": "48V 11.6 Ah"
-    },
-    {
-      "marca": "Hiboy",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1399.0,
-      "bateria": "48V 11.6 Ah"
+      "autonomia_max_km": 150,
+      "bateria": "Litio / 72V / 50Ah"
     },
     {
       "marca": "Cross",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 2340.0,
-      "bateria": "Litio 60V 30Ah",
-      "autonomia_km": "80Km",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 80
+      "autonomia_max_km": 80,
+      "bateria": "Litio / 60V / 30Ah"
     },
     {
       "marca": "Rayo",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1899.0,
-      "bateria": "Litio 48V 30Ah",
-      "autonomia_km": "80Km",
-      "autonomia_min_km": 80,
-      "autonomia_max_km": 80
+      "autonomia_max_km": 80,
+      "bateria": "Litio / 48V / 30Ah"
     },
     {
       "marca": "Bolt",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 2140.0,
-      "bateria": "Litio 48V 30Ah",
-      "autonomia_km": "100Km",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
+      "autonomia_max_km": 100,
+      "bateria": "Litio / 48V / 30Ah"
     },
     {
       "marca": "Hezzo",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 410.0,
-      "bateria": "Litio",
-      "autonomia_km": "30-35km",
-      "autonomia_min_km": 30,
-      "autonomia_max_km": 35
+      "autonomia_max_km": 35,
+      "bateria": "Litio"
     },
     {
       "marca": "Topmax",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1800.0,
-      "bateria": "de litio: 48V / 40Ah Cargador: 48V / 4A Frenos: Disco delantero y tras",
-      "autonomia_km": "85-90 km por carga Capacidad de carga: 170 kg Tiempo de carg",
-      "autonomia_min_km": 85,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "litio / 48V / 40Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1600.0,
-      "bateria": "de litio: 60V 40AH Velocidad máxima: 50 km/h Autonomía máxima: 100 km",
-      "autonomia_km": "máxima: 100 km Tiempo de carga: 5–6 horas Motor: 1800W Rueda",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
-    },
-    {
-      "marca": "Brisa",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1450.0,
-      "bateria": "de 48V 50Ah"
+      "autonomia_max_km": 100,
+      "bateria": "litio / 60V / 40Ah"
     },
     {
       "marca": "Mikazuki",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 700.0,
-      "bateria": "de lito 48V / 25 Ah Removible",
-      "autonomia_km": "por carga de 70km",
-      "autonomia_min_km": 70,
-      "autonomia_max_km": 70
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1000.0,
-      "bateria": "48V 20Ah"
+      "autonomia_max_km": 70,
+      "bateria": "48V / 25Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1750.0,
-      "bateria": "Litio 72V 45Ah",
-      "autonomia_km": "máxima hasta 130 km",
-      "autonomia_min_km": 130,
-      "autonomia_max_km": 130
+      "autonomia_max_km": 130,
+      "bateria": "Litio / 72V / 45Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 2250.0,
-      "bateria": "Lithium-ion / 48 Volt / 12 Ah",
-      "autonomia_km": "40-50km / 25-30 miles",
-      "autonomia_min_km": 40,
-      "autonomia_max_km": 50
+      "autonomia_max_km": 50,
+      "bateria": "Lithium-ion / 48V / 12Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 2050.0,
-      "bateria": "Lithium-ion / 48 Volt / 12 Ah",
-      "autonomia_km": "50-60km / 35-40 miles",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 60
+      "autonomia_max_km": 60,
+      "bateria": "Lithium-ion / 48V / 12Ah"
     },
     {
       "marca": "E-Lite",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 880.0,
-      "bateria": "48 Volt / 21 Ah",
-      "autonomia_km": "40-80km",
-      "autonomia_min_km": 40,
-      "autonomia_max_km": 80
+      "autonomia_max_km": 80,
+      "bateria": "48V / 21Ah"
     },
     {
       "marca": "E-Track",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 900.0,
-      "bateria": "48 Volt / 21 Ah",
-      "autonomia_km": "40-80km",
-      "autonomia_min_km": 40,
-      "autonomia_max_km": 80
+      "autonomia_max_km": 80,
+      "bateria": "48V / 21Ah"
     },
     {
       "marca": "E-On",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 600.0,
-      "bateria": "36 Volt / 6 Ah",
-      "autonomia_km": "25km",
-      "autonomia_min_km": 25,
-      "autonomia_max_km": 25
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Patinete electrico",
-      "precio_usd": 350.0,
-      "bateria": "de litio – Serie 18650"
+      "autonomia_max_km": 25,
+      "bateria": "36V / 6Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 450.0,
-      "bateria": "de largo alcance: Equipado con una batería de iones de litio de 36 V y",
-      "autonomia_km": "45 km",
-      "autonomia_min_km": 45,
-      "autonomia_max_km": 45
-    },
-    {
-      "marca": "Generica",
-      "tipo_vehiculo": "Bicicleta electrica",
-      "precio_usd": 1100.0,
-      "bateria": "Lithium / 48 Volt / 20 Ah"
+      "autonomia_max_km": 45,
+      "bateria": "litio / 36V"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Patinete electrico",
       "precio_usd": 500.0,
-      "bateria": "de litio – Serie 18650",
-      "autonomia_km": "50km",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 50
+      "autonomia_max_km": 50,
+      "bateria": "litio"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 600.0,
-      "bateria": "de 48 V y 15 Ah",
-      "autonomia_km": "120 km, frenos de disco duales y certificación",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "48V / 15Ah"
     },
     {
       "marca": "Halcon",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 650.0,
-      "bateria": "48V 12Ah",
-      "autonomia_km": "20-40km",
-      "autonomia_min_km": 20,
-      "autonomia_max_km": 40
+      "autonomia_max_km": 40,
+      "bateria": "48V / 12Ah"
     },
     {
       "marca": "Halcon",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1300.0,
-      "bateria": "de litio 48V 50Ah – Gran autonomía y carga rápida en solo 6 horas",
-      "autonomia_km": "aproximada: 100 km",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
+      "autonomia_max_km": 100,
+      "bateria": "litio / 48V / 50Ah"
     },
     {
       "marca": "Bucatti",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 820.0,
-      "bateria": "de lithium extraíble",
-      "autonomia_km": "60-80 km",
-      "autonomia_min_km": 60,
-      "autonomia_max_km": 80
+      "autonomia_max_km": 80,
+      "bateria": "lithium"
     },
     {
       "marca": "Topmaq",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 2000.0,
-      "bateria": "de lithium extraíble",
-      "autonomia_km": "100 km",
-      "autonomia_min_km": 100,
-      "autonomia_max_km": 100
+      "autonomia_max_km": 100,
+      "bateria": "lithium"
     },
     {
       "marca": "Fly Racing",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1900.0,
-      "bateria": "de Litio 72V 45AH",
-      "autonomia_km": "90 km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "Litio / 72V / 45Ah"
     },
     {
       "marca": "Cocuyo",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1900.0,
-      "bateria": "45AH",
-      "autonomia_km": "120km",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 120
+      "autonomia_max_km": 120,
+      "bateria": "45Ah"
     },
     {
       "marca": "Cocuyo",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1780.0,
-      "bateria": "40AH",
-      "autonomia_km": "90km",
-      "autonomia_min_km": 90,
-      "autonomia_max_km": 90
+      "autonomia_max_km": 90,
+      "bateria": "40Ah"
     },
     {
       "marca": "Topmax",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1720.0,
-      "bateria": "Litio 60V 30Ah",
-      "autonomia_km": "Hasta 95 km por carga",
-      "autonomia_min_km": 95,
-      "autonomia_max_km": 95
+      "autonomia_max_km": 95,
+      "bateria": "Litio / 60V / 30Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1025.0,
-      "bateria": "de lithium 48v/13ah Motor 500W Luces: Led Rendimiento de la bateria: 5",
-      "autonomia_km": "25-30km",
-      "autonomia_min_km": 25,
-      "autonomia_max_km": 30
+      "autonomia_max_km": 30,
+      "bateria": "lithium / 48V / 13Ah"
     },
     {
       "marca": "Infinity",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 975.0,
-      "bateria": "de litio / Cargador 36V 18Ah / 48V 2A",
-      "autonomia_km": "máxima 50–60 km",
-      "autonomia_min_km": 50,
-      "autonomia_max_km": 60
+      "autonomia_max_km": 60,
+      "bateria": "litio / 36V / 18Ah"
     },
     {
       "marca": "Generica",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 410.0,
-      "bateria": "de 48 V y 15 Ah",
-      "autonomia_km": "hasta 120–140 km por carga, mientras que el sistema de suspe",
-      "autonomia_min_km": 120,
-      "autonomia_max_km": 140
+      "autonomia_max_km": 140,
+      "bateria": "48V / 15Ah"
     },
     {
       "marca": "Izuki",
       "tipo_vehiculo": "Bicicleta electrica",
       "precio_usd": 1400.0,
-      "bateria": "Litio 48V 35Ah",
-      "autonomia_km": "máxima: 75 km Otros datos",
-      "autonomia_min_km": 75,
-      "autonomia_max_km": 75
+      "autonomia_max_km": 75,
+      "bateria": "Litio / 48V / 35Ah"
     }
-  ]
+  ],
+  "total_originales": 57
 }
