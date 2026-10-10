@@ -10,8 +10,11 @@ organizado por secciones:
                              tabla de resumen y tres graficos.
     SEGUNDA FUENTE: MERCADO   las dos tiendas (VEDCA e CubAmerica):
                              disponibilidad/precios y autonomia por tipo
-                             de vehiculo frente al presupuesto (grafico de caja).
-    OTRAS FUENTES            Telegram, encuestas (mas adelante)
+                             de vehiculo frente al presupuesto (mapa de calor).
+    TERCERA FUENTE: ENCUESTAS  personas que ya tienen un vehiculo electrico:
+                              precio, uso, degradacion de la autonomia y
+                              calidad real segun sus dueños.
+    OTRAS FUENTES            Telegram (mas adelante)
 
 El notebook `proyecto.ipynb` NO tiene codigo: solo importa desde aqui y muestra
 los resultados.
@@ -109,6 +112,11 @@ MERCADOS = (
 )
 
 DICC_MERCADOS = {m["slug"]: m for m in MERCADOS}
+
+# TERCERA FUENTE: ENCUESTAS. Personas que ya tienen un vehiculo electrico y
+# cuentan su experiencia (precio, uso y calidad real).
+ARCHIVO_ENCUESTAS = "encuestas_personas.json"
+ORDEN_CALIDAD = ["Buena", "Regular", "Mala"]
 
 # Color por sitio, usado en los tres graficos.
 COLOR_SITIOS = {
@@ -510,7 +518,7 @@ def orden_con_productos(sitios=SITIOS) -> list[str]:
 # SEGUNDA FUENTE: MERCADO  (VEDCA e CubAmerica)
 #   Bloque A: disponibilidad y precios de cada tienda.
 #   Bloque B: autonomia por tipo de vehiculo y presupuesto, por mercado
-#             (grafico de caja en dos paneles) y la mejor opcion de cada tipo.
+#             (mapa de calor en dos paneles) y la mejor opcion de cada tipo.
 # ==============================================================================
 
 def _bateria_datos(texto: str | None) -> dict:
@@ -680,100 +688,102 @@ def mejor_por_tipo(mercados=MERCADOS) -> dict:
     return datos
 
 
-def figura_autonomia_boxplot(ruta: Path | None = None):
-    """G-mercado. Boxplot de dos paneles: distribucion de la autonomia por tipo
-    de vehiculo y mercado. Izquierda: todos los productos publicados; derecha:
-    los que caben en el presupuesto de Lucy. Cada producto se dibuja como punto
-    negro sobre su caja."""
-    from matplotlib.lines import Line2D
-    from matplotlib.patches import Patch
+def _figura_mapa_autonomia(matriz, datos, clave, mercados, filas, titulo, cmap,
+                           tope):
+    """Construye una figura con un solo mapa de calor de autonomia tipica."""
+    fig, ax = plt.subplots(figsize=(7.8, 5.2))
+    imagen = ax.imshow(np.ma.masked_invalid(matriz), cmap=cmap, vmin=0,
+                       vmax=tope, aspect="auto")
+    ax.set_xticks(range(len(mercados)))
+    ax.set_xticklabels([m["nombre"].split(" (")[0] for m in mercados],
+                       fontsize=13.5, fontweight="bold")
+    ax.set_yticks(range(len(filas)))
+    ax.set_yticklabels([ETIQUETAS[c] for c in filas], fontsize=12.5)
+    ax.set_xticks(np.arange(-0.5, len(mercados), 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(filas), 1), minor=True)
+    ax.grid(which="minor", color="white", linewidth=3)
+    ax.tick_params(which="both", length=0)
+    for borde in ax.spines.values():
+        borde.set_visible(False)
 
-    PALETA_MERCADO = {
-        "vedca": "#5C7CFA",
-        "cubamerica": "#FFA94D",
-    }
-    NEGRO_PUNTO = "#1A1A1A"
+    for i, categoria in enumerate(filas):
+        for j, mercado in enumerate(mercados):
+            valor = matriz[i, j]
+            if np.isfinite(valor):
+                color = "white" if valor > tope * 0.6 else "#1A1A1A"
+                ax.text(j, i, f"{valor:.0f} km", ha="center", va="center",
+                        fontsize=15, fontweight="bold", color=color)
+            else:
+                texto = ("no vende"
+                         if not datos[(mercado["slug"], categoria)]["n"]
+                         else "nadie entra")
+                ax.text(j, i, texto, ha="center", va="center",
+                        fontsize=10.5, color="#6B7280")
+
+    barra = fig.colorbar(imagen, ax=ax, fraction=0.055, pad=0.04)
+    barra.set_label("Autonomía típica (km)", fontsize=11)
+    barra.outline.set_visible(False)
+
+    fig.suptitle(titulo, fontsize=16.5, fontweight="bold", y=0.99)
+    fig.text(0.5, 0.905,
+             "Cada celda es la autonomía típica (la mediana), en km. "
+             "Más oscuro = llega más lejos.",
+             ha="center", va="center", fontsize=11, color="#4B5563")
+    fig.subplots_adjust(top=0.80, bottom=0.10, left=0.24, right=0.99)
+    return fig
+
+
+def figura_autonomia_heatmap(ruta_publicados: Path | None = None,
+                             ruta_presupuesto: Path | None = None):
+    """G-mercado. Dos mapas de calor separados con la autonomia tipica (mediana)
+    por tipo de vehiculo y mercado: 'Todo lo que se vende' en azul y 'Solo lo que
+    cabe en 1.500 USD' en rojo. Cuanto mas oscura la celda, mas lejos llega."""
+    from matplotlib.colors import LinearSegmentedColormap
 
     datos = autonomia_por_tipo()
     mercados = list(MERCADOS)
-    posiciones = list(range(len(ORDEN)))
-    ancho = 0.3
+    filas = ORDEN
 
-    paneles = [
-        ("autonomias", "Todos los productos publicados"),
-        ("autonomias_dentro", f"Los que caben en {PRESUPUESTO_LUCY} USD"),
-    ]
+    def _mediana(valores):
+        return float(np.median(valores)) if valores else float("nan")
+
+    matrices = {
+        "autonomias": np.array(
+            [[_mediana(datos[(m["slug"], c)]["autonomias"]) for m in mercados]
+             for c in filas], dtype=float),
+        "autonomias_dentro": np.array(
+            [[_mediana(datos[(m["slug"], c)]["autonomias_dentro"])
+              for m in mercados] for c in filas], dtype=float),
+    }
 
     tope = 0
-    for mercado in mercados:
-        for categoria in ORDEN:
-            valores = datos[(mercado["slug"], categoria)]["autonomias"]
-            if valores:
-                tope = max(tope, max(valores))
+    for matriz in matrices.values():
+        validos = matriz[np.isfinite(matriz)]
+        if validos.size:
+            tope = max(tope, float(validos.max()))
+    tope = float(np.ceil(tope / 20.0) * 20.0)
 
-    fig, axes = plt.subplots(1, 2, figsize=(13.5, 6.8), sharey=True)
-    generador = np.random.default_rng(7)
+    cmap_azul = LinearSegmentedColormap.from_list(
+        "azul", ["#EAF2FF", "#1D4ED8"])
+    cmap_rojo = LinearSegmentedColormap.from_list(
+        "rojo", ["#FCEDED", "#C81E1E"])
+    for cm in (cmap_azul, cmap_rojo):
+        cm.set_bad("#E5E7EB")
 
-    for ax, (clave, titulo) in zip(axes, paneles):
-        for i, mercado in enumerate(mercados):
-            color = PALETA_MERCADO[mercado["slug"]]
-            corrimiento = (i - (len(mercados) - 1) / 2) * ancho
-            for x in posiciones:
-                valores = datos[(mercado["slug"], ORDEN[x])][clave]
-                pos = x + corrimiento
-                if not valores:
-                    ax.text(pos, tope * 0.05, "no vende" if not datos[
-                        (mercado["slug"], ORDEN[x])]["n"] else "nadie\nentra",
-                        ha="center", va="bottom", fontsize=9, color="#9AA1A6")
-                    continue
-                ax.boxplot(
-                    [valores], positions=[pos], widths=ancho * 0.94,
-                    patch_artist=True, showfliers=False, whis=(0, 100),
-                    medianprops=dict(color="white", linewidth=2.4),
-                    boxprops=dict(facecolor=color, edgecolor="white",
-                                  linewidth=1.8),
-                    whiskerprops=dict(color=color, linewidth=1.8),
-                    capprops=dict(color=color, linewidth=1.8),
-                    zorder=2)
-                puntos_x = pos + generador.uniform(-0.08, 0.08, len(valores))
-                ax.scatter(puntos_x, valores, s=36, color=NEGRO_PUNTO,
-                           edgecolor="white", linewidth=1.0, zorder=4)
-                ax.text(pos, max(valores) + tope * 0.025, f"n={len(valores)}",
-                        ha="center", va="bottom", fontsize=9.5,
-                        fontweight="bold", color=NEGRO_PUNTO)
-
-        ax.set_xticks(posiciones)
-        ax.set_xticklabels([ETIQUETAS[c] for c in ORDEN], fontsize=12)
-        ax.set_title(titulo, fontsize=13, fontweight="bold", pad=12)
-        ax.spines[["top", "right"]].set_visible(False)
-        ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
-
-    axes[0].set_ylabel("Autonomía (km)", fontsize=12.5)
-    axes[0].set_ylim(0, tope * 1.2)
-
-    segmento_bigotes = Line2D([0, 1], [0, 0], color="#94A3B8", linewidth=2.5,
-                              label="Bigotes: mínimo y máximo")
-    leyenda = [
-        Patch(facecolor=PALETA_MERCADO["vedca"], edgecolor="white",
-              label=MERCADOS[0]["nombre"]),
-        Patch(facecolor=PALETA_MERCADO["cubamerica"], edgecolor="white",
-              label=MERCADOS[1]["nombre"]),
-        Line2D([0], [0], color="none", marker="o", markerfacecolor=NEGRO_PUNTO,
-               markeredgecolor="white", markersize=9,
-               label="Cada punto es un producto"),
-        Patch(facecolor="white", edgecolor="#B9C0C9",
-              label="Caja: 50 % central  ·  Línea blanca: mediana"),
-        segmento_bigotes,
+    paneles = [
+        ("autonomias", "Todo lo que se vende", cmap_azul),
+        ("autonomias_dentro",
+         f"Solo lo que cabe en {_formato(PRESUPUESTO_LUCY)} USD", cmap_rojo),
     ]
-    fig.legend(handles=leyenda, frameon=False, fontsize=11,
-               loc="upper center", bbox_to_anchor=(0.5, 0.935), ncol=3,
-               handler_map={segmento_bigotes: _SegmentoLegendario()})
 
-    fig.suptitle("Autonomía por tipo de vehículo y presupuesto, en cada mercado",
-                 fontsize=16, fontweight="bold", y=0.99)
-    fig.subplots_adjust(top=0.76, bottom=0.11, left=0.07, right=0.99,
-                        wspace=0.13)
-    return _guardar(fig, ruta)
+    figuras = [
+        _figura_mapa_autonomia(matrices[clave], datos, clave, mercados, filas,
+                               titulo, cmap, tope)
+        for clave, titulo, cmap in paneles
+    ]
+    figuras[0] = _guardar(figuras[0], ruta_publicados)
+    figuras[1] = _guardar(figuras[1], ruta_presupuesto)
+    return figuras
 
 
 def ejecutar():
@@ -782,15 +792,389 @@ def ejecutar():
     figura_precios_promedio(CARPETA_GRAFICOS / "precios_promedio_sitios.png")
     figura_disponibilidad(CARPETA_GRAFICOS / "disponibilidad_presupuesto.png")
     figura_alcance_general(CARPETA_GRAFICOS / "autonomia_alcance_sitios.png")
-    figura_autonomia_boxplot(
-        CARPETA_GRAFICOS / "autonomia_por_tipo_mercado.png")
+    figura_autonomia_heatmap(
+        CARPETA_GRAFICOS / "autonomia_mercado_publicados.png",
+        CARPETA_GRAFICOS / "autonomia_mercado_presupuesto.png")
+    figura_encuestas_degradacion(
+        CARPETA_GRAFICOS / "encuestas_uso_degradacion.png")
+    figura_encuestas_calidad(CARPETA_GRAFICOS / "encuestas_calidad.png")
+    figura_encuestas_real_vs_publicada(
+        CARPETA_GRAFICOS / "encuestas_real_vs_publicada.png")
     return CARPETA_GRAFICOS
 
 
 # ==============================================================================
+# TERCERA FUENTE: ENCUESTAS  (personas que ya tienen un vehiculo electrico)
+#   Bloque A: tabla descriptiva por persona.
+#   Bloque B: autonomia por tipo, degradacion por marca, calidad de las
+#             opiniones y contraste de la autonomia real con la publicada.
+# ==============================================================================
+
+def cargar_encuestas() -> list[dict]:
+    """Devuelve la lista de personas encuestadas."""
+    ruta = RAIZ / "data" / ARCHIVO_ENCUESTAS
+    with open(ruta, encoding="utf-8") as f:
+        return json.load(f)["personas"]
+
+
+def _perdida(persona: dict) -> tuple[float, float]:
+    """Autonomia perdida desde la compra: (km, %). Positivo = perdio autonomia;
+    negativo = gano (le rinde mas que cuando la compro)."""
+    nueva = persona["autonomia_nueva_km"]
+    actual = persona["autonomia_actual_km"]
+    km = nueva - actual
+    porciento = (km / nueva * 100) if nueva else 0.0
+    return km, porciento
+
+
+def tabla_encuestas_markdown() -> str:
+    """Bloque A. Una fila por persona con sus datos y la perdida calculada."""
+    filas = []
+    for p in cargar_encuestas():
+        km, porciento = _perdida(p)
+        filas.append([
+            p["id"],
+            ETIQUETAS[p["tipo_vehiculo"]],
+            p["marca"],
+            _formato(p["anios_uso"], 1),
+            _formato(p["precio_usd"]),
+            _formato(p["autonomia_nueva_km"]),
+            _formato(p["autonomia_actual_km"]),
+            _formato(km),
+            _formato(porciento, 1) + " %",
+            p["calidad"],
+        ])
+    return tabla_markdown(
+        ["Persona", "Tipo", "Marca", "Tiempo (años)", "Precio (USD)",
+         "Autonomía nueva (km)", "Autonomía actual (km)", "Pérdida (km)",
+         "Pérdida (%)", "Calidad"],
+        filas,
+    )
+
+
+def resumen_encuestas_tipo() -> list[dict]:
+    """Bloque B. Por tipo de vehiculo: cuantas personas, precio, autonomia
+    nueva/actual y perdida promedio."""
+    encuestas = cargar_encuestas()
+    filas = []
+    for categoria in ORDEN:
+        grupo = [p for p in encuestas if p["tipo_vehiculo"] == categoria]
+        if not grupo:
+            continue
+        perdidas = [_perdida(p)[1] for p in grupo]
+        filas.append({
+            "categoria": categoria,
+            "n": len(grupo),
+            "precio_prom": stat.mean([p["precio_usd"] for p in grupo]),
+            "nueva_prom": stat.mean([p["autonomia_nueva_km"] for p in grupo]),
+            "actual_prom": stat.mean([p["autonomia_actual_km"] for p in grupo]),
+            "perdida_prom": stat.mean(perdidas),
+        })
+    return filas
+
+
+def tabla_encuestas_tipo_markdown() -> str:
+    """Tabla resumen por tipo de vehiculo."""
+    filas = []
+    for f in resumen_encuestas_tipo():
+        filas.append([
+            ETIQUETAS[f["categoria"]],
+            str(f["n"]),
+            _formato(f["precio_prom"]),
+            _formato(f["nueva_prom"]),
+            _formato(f["actual_prom"]),
+            _formato(f["perdida_prom"], 1) + " %",
+        ])
+    return tabla_markdown(
+        ["Tipo", "Personas", "Precio prom. (USD)", "Autonomía nueva prom. (km)",
+         "Autonomía actual prom. (km)", "Pérdida prom. (%)"],
+        filas,
+    )
+
+
+def degradacion_por_marca() -> list[dict]:
+    """Bloque B. Por marca: cuantas personas, años de uso promedio y caida de la
+    autonomia (%). Solo marcas con al menos una persona."""
+    encuestas = cargar_encuestas()
+    por_marca: dict[str, dict] = {}
+    for p in encuestas:
+        dato = por_marca.setdefault(p["marca"], {
+            "marca": p["marca"], "n": 0, "tipos": set(),
+            "anios": [], "nueva": [], "actual": [], "perdida": [],
+            "notas": [],
+        })
+        dato["n"] += 1
+        dato["tipos"].add(ETIQUETAS[p["tipo_vehiculo"]])
+        dato["anios"].append(p["anios_uso"])
+        dato["nueva"].append(p["autonomia_nueva_km"])
+        dato["actual"].append(p["autonomia_actual_km"])
+        dato["perdida"].append(_perdida(p)[1])
+        if p["nota"]:
+            dato["notas"].append(f"{p['id'].replace('PERSONA ', 'P')}: {p['nota']}")
+
+    filas = []
+    for dato in por_marca.values():
+        filas.append({
+            "marca": dato["marca"],
+            "n": dato["n"],
+            "tipos": ", ".join(sorted(dato["tipos"])),
+            "anios_prom": stat.mean(dato["anios"]),
+            "nueva_prom": stat.mean(dato["nueva"]),
+            "actual_prom": stat.mean(dato["actual"]),
+            "perdida_prom": stat.mean(dato["perdida"]),
+            "observaciones": " ".join(dato["notas"]) if dato["notas"] else "—",
+        })
+    filas.sort(key=lambda f: f["perdida_prom"])
+    return filas
+
+
+def tabla_degradacion_markdown() -> str:
+    """Tabla de degradacion de la autonomia por marca."""
+    filas = []
+    for f in degradacion_por_marca():
+        filas.append([
+            f["marca"],
+            str(f["n"]),
+            f["tipos"],
+            _formato(f["anios_prom"], 1),
+            _formato(f["nueva_prom"]),
+            _formato(f["actual_prom"]),
+            _formato(f["perdida_prom"], 1) + " %",
+            f["observaciones"],
+        ])
+    return tabla_markdown(
+        ["Marca", "Personas", "Tipo(s)", "Años de uso prom.",
+         "Autonomía nueva prom. (km)", "Autonomía actual prom. (km)",
+         "Pérdida prom. (%)", "Observaciones"],
+        filas,
+    )
+
+
+def calidad_resumen() -> dict:
+    """Bloque B. Cuantas opiniones hay de cada nivel de calidad."""
+    conteo = Counter(p["calidad"] for p in cargar_encuestas())
+    return {nivel: conteo.get(nivel, 0) for nivel in ORDEN_CALIDAD}
+
+
+def tabla_calidad_markdown() -> str:
+    """Tabla del conteo de opiniones de calidad."""
+    conteo = calidad_resumen()
+    total = sum(conteo.values()) or 1
+    filas = []
+    for nivel in ORDEN_CALIDAD:
+        n = conteo[nivel]
+        filas.append([nivel, str(n), _formato(n / total * 100, 1) + " %"])
+    return tabla_markdown(["Calidad", "Personas", "Porcentaje"], filas)
+
+
+def _autonomia_promedio_publicada(sitios, categoria: str) -> float | None:
+    """Autonomia promedio publicada de una categoria en un grupo de sitios."""
+    valores = [int(_autonomia(s, p))
+               for s in sitios for p in grupo_de(s, categoria)]
+    return stat.mean(valores) if valores else None
+
+
+def real_vs_publicada() -> list[dict]:
+    """Bloque B. Por tipo: autonomia de los dueños (nueva y actual) frente a la
+    autonomia publicada en INTERNET y en MERCADO."""
+    encuestas = cargar_encuestas()
+    filas = []
+    for categoria in ORDEN:
+        grupo = [p for p in encuestas if p["tipo_vehiculo"] == categoria]
+        if not grupo:
+            continue
+        filas.append({
+            "categoria": categoria,
+            "n": len(grupo),
+            "nueva_prom": stat.mean([p["autonomia_nueva_km"] for p in grupo]),
+            "actual_prom": stat.mean([p["autonomia_actual_km"] for p in grupo]),
+            "internet_prom": _autonomia_promedio_publicada(SITIOS, categoria),
+            "mercado_prom": _autonomia_promedio_publicada(MERCADOS, categoria),
+        })
+    return filas
+
+
+def tabla_real_vs_publicada_markdown() -> str:
+    """Tabla que compara la autonomia real (dueños) con la publicada."""
+    filas = []
+    for f in real_vs_publicada():
+        filas.append([
+            ETIQUETAS[f["categoria"]],
+            str(f["n"]),
+            _formato(f["nueva_prom"]),
+            _formato(f["actual_prom"]),
+            _formato(f["internet_prom"]),
+            _formato(f["mercado_prom"]),
+        ])
+    return tabla_markdown(
+        ["Tipo", "Personas", "Autonomía nueva real (km)",
+         "Autonomía actual real (km)", "Publicada en Internet (km)",
+         "Publicada en Mercado (km)"],
+        filas,
+    )
+
+
+# --------------------------------- graficos de encuestas
+
+COLOR_CALIDAD = {"Buena": "#10B981", "Regular": "#F9A602", "Mala": "#E63946"}
+
+COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
+              "Bicicleta eléctrica": "#10B981",
+              "Patinete eléctrico": "#F9A602"}
+
+
+def figura_encuestas_degradacion(ruta: Path | None = None):
+    """Burbujas: años de uso (x) frente al % de autonomia perdida (y). El color
+    indica el tipo de vehiculo y el tamaño del punto, la autonomia de recien
+    comprado. Una linea de tendencia muestra como crece la perdida con los años."""
+    from matplotlib.lines import Line2D
+
+    encuestas = cargar_encuestas()
+    xs = [p["anios_uso"] for p in encuestas]
+    ys = [_perdida(p)[1] for p in encuestas]
+    nuevas = [p["autonomia_nueva_km"] for p in encuestas]
+    lo, hi = min(nuevas), max(nuevas)
+
+    def tamano(km: float) -> float:
+        return 90 + (km - lo) / (hi - lo) * 620
+
+    fig, ax = plt.subplots(figsize=(10.4, 7.0))
+    for p in encuestas:
+        ax.scatter(p["anios_uso"], _perdida(p)[1], s=tamano(p["autonomia_nueva_km"]),
+                   color=COLOR_TIPO[ETIQUETAS[p["tipo_vehiculo"]]],
+                   edgecolor="#374151" if p["bateria_cambiada"] else "white",
+                   linewidth=2.4 if p["bateria_cambiada"] else 1.6,
+                   alpha=0.85, zorder=3)
+
+    base = [p for p in encuestas if not p["bateria_cambiada"] and not p["nota"]]
+    pendiente, corte = np.polyfit([p["anios_uso"] for p in base],
+                                  [_perdida(p)[1] for p in base], 1)
+    xr = np.linspace(min(xs), max(xs), 50)
+    ax.plot(xr, pendiente * xr + corte, "--", color="#6B7280",
+            linewidth=2.2, zorder=2)
+
+    ax.axhline(0, color="#9CA3AF", linewidth=1.2, linestyle=":", zorder=1)
+
+    for p in encuestas:
+        _, porciento = _perdida(p)
+        if p["bateria_cambiada"] or p["nota"] or porciento < 0:
+            ax.annotate(p["id"].replace("PERSONA ", "P"),
+                        (p["anios_uso"], porciento),
+                        textcoords="offset points", xytext=(0, 13),
+                        ha="center", fontsize=9.5, fontweight="bold",
+                        color="#374151")
+
+    ax.set_xlabel("Años de uso\n(el tamaño del punto indica la autonomía de "
+                  "recién comprado)", fontsize=12)
+    ax.set_ylabel("Autonomía perdida (%)", fontsize=12.5)
+    ax.set_xlim(-0.4, max(xs) + 0.8)
+    ax.set_title("A más años de uso, más autonomía se pierde",
+                 fontsize=16, fontweight="bold", pad=42)
+    _leyenda_arriba(ax, [
+        Line2D([0], [0], marker="o", color="none",
+               markerfacecolor=COLOR_TIPO[ETIQUETAS[t]],
+               markeredgecolor="white", markersize=12, label=ETIQUETAS[t])
+        for t in ORDEN
+    ] + [Line2D([0], [0], color="#6B7280", linewidth=2.2, linestyle="--",
+                label="Tendencia")], ncol=4)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
+    fig.tight_layout()
+    return _guardar(fig, ruta)
+
+
+def figura_encuestas_real_vs_publicada(ruta: Path | None = None):
+    """Dumbbell: por tipo, la autonomia real de los dueños frente a la
+    publicada en Internet y en Mercado, unidas por una linea."""
+    from matplotlib.lines import Line2D
+
+    filas = real_vs_publicada()
+    tipos = [f["categoria"] for f in filas]
+    y = list(range(len(tipos)))
+    color_real, color_internet, color_mercado = "#E63946", "#1D6FE0", "#10B981"
+
+    fig, ax = plt.subplots(figsize=(10.2, 5.0))
+    for i, f in enumerate(filas):
+        valores = [v for v in (f["nueva_prom"], f["internet_prom"],
+                               f["mercado_prom"]) if v is not None]
+        ax.plot([min(valores), max(valores)], [i, i], color="#D1D5DB",
+                linewidth=5, solid_capstyle="round", zorder=1)
+        for valor, color in ((f["nueva_prom"], color_real),
+                             (f["internet_prom"], color_internet),
+                             (f["mercado_prom"], color_mercado)):
+            if valor is None:
+                continue
+            ax.scatter([valor], [i], s=180, color=color, edgecolor="white",
+                       linewidth=1.7, zorder=3)
+        ax.text(f["nueva_prom"], i - 0.20, f"{f['nueva_prom']:.0f}",
+                ha="center", va="top", fontsize=11, fontweight="bold",
+                color=color_real)
+        ax.text(f["internet_prom"], i - 0.20, f"{f['internet_prom']:.0f}",
+                ha="center", va="top", fontsize=11, fontweight="bold",
+                color=color_internet)
+        ax.text(f["mercado_prom"], i + 0.20, f"{f['mercado_prom']:.0f}",
+                ha="center", va="bottom", fontsize=11, fontweight="bold",
+                color=color_mercado)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([ETIQUETAS[t] for t in tipos], fontsize=12.5)
+    ax.set_xlabel("Autonomía promedio (km)", fontsize=12.5)
+    ax.set_xlim(0, 120)
+    ax.set_ylim(-0.7, len(tipos) - 0.3)
+    ax.set_title("La autonomía real de los dueños frente a la publicada",
+                 fontsize=16, fontweight="bold", pad=42)
+    _leyenda_arriba(ax, [
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=color_real,
+               markeredgecolor="white", markersize=12, label="Real (dueños)"),
+        Line2D([0], [0], marker="o", color="none",
+               markerfacecolor=color_internet, markeredgecolor="white",
+               markersize=12, label="Publicada en Internet"),
+        Line2D([0], [0], marker="o", color="none",
+               markerfacecolor=color_mercado, markeredgecolor="white",
+               markersize=12, label="Publicada en Mercado"),
+    ], ncol=3)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
+    fig.tight_layout()
+    return _guardar(fig, ruta)
+
+
+def figura_encuestas_calidad(ruta: Path | None = None):
+    """Pastel: cuantas personas califican su vehiculo como bueno, regular o
+    malo."""
+    conteo = calidad_resumen()
+    total = len(cargar_encuestas()) or 1
+    niveles = [n for n in ORDEN_CALIDAD if conteo.get(n)]
+    valores = [conteo[n] for n in niveles]
+    colores = [COLOR_CALIDAD[n] for n in niveles]
+
+    fig, ax = plt.subplots(figsize=(5.4, 4.6))
+    cuñas, _, textos = ax.pie(
+        valores, colors=colores, startangle=90, counterclock=False,
+        autopct=lambda pct: f"{pct:.0f} %", pctdistance=0.75,
+        wedgeprops={"width": 0.42, "edgecolor": "white", "linewidth": 2},
+        textprops={"fontsize": 11, "fontweight": "bold", "color": "white"})
+    ax.text(0, 0.12, f"{total}", ha="center", va="center", fontsize=22,
+            fontweight="bold", color="#1A1A1A")
+    ax.text(0, -0.16, "personas", ha="center", va="center", fontsize=10.5,
+            color="#6B7280")
+    ax.text(0, -0.38, "Mala: 0", ha="center", va="center", fontsize=9.5,
+            color="#6B7280")
+
+    ax.legend(
+        [f"{nivel}: {conteo[nivel]}" for nivel in niveles],
+        loc="lower center", bbox_to_anchor=(0.5, -0.08), ncol=len(niveles),
+        frameon=False, fontsize=11)
+    ax.set_title("La calidad según sus dueños", fontsize=15,
+                 fontweight="bold", pad=14)
+    ax.set_aspect("equal")
+    fig.tight_layout()
+    return _guardar(fig, ruta)
+
+
+# ==============================================================================
 # OTRAS FUENTES
-#   Telegram y encuestas a personas (mas adelante).
-#   Aqui se van anadiendo sus datos y sus analisis, en el mismo archivo.
+#   Telegram (mas adelante). Aqui se van anadiendo sus datos y analisis.
 # ==============================================================================
 
 
@@ -819,3 +1203,12 @@ if __name__ == "__main__":
             print(f"  {dato['mercado']:22} {ETIQUETAS[dato['categoria']]:22} "
                   f"{dato['marca']:10} {_formato(dato['precio'])} USD / "
                   f"{dato['autonomia']} km ({_formato(dato['usd_km'], 1)} USD/km)")
+    print()
+    print("TERCERA FUENTE: ENCUESTAS A PERSONAS")
+    print(tabla_encuestas_tipo_markdown())
+    print()
+    print(tabla_degradacion_markdown())
+    print()
+    print(tabla_calidad_markdown())
+    print()
+    print(tabla_real_vs_publicada_markdown())
