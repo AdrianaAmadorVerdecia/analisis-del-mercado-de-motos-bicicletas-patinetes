@@ -786,8 +786,93 @@ def figura_autonomia_heatmap(ruta_publicados: Path | None = None,
     return figuras
 
 
+def productos_todos() -> list[dict]:
+    """Todos los productos analizados (Internet y Mercado) con tipo, marca,
+    sitio, precio en USD y autonomia en km."""
+    items = []
+    for sitio in SITIOS + MERCADOS:
+        for p in cargar_sitio(sitio):
+            autonomia = _autonomia(sitio, p)
+            if not autonomia:
+                continue
+            items.append({
+                "tipo": p["tipo_vehiculo"],
+                "marca": p.get("marca") or "Sin marca",
+                "sitio": sitio["nombre"],
+                "precio": round(float(_precio(sitio, p))),
+                "autonomia": int(autonomia),
+            })
+    return items
+
+
+def figura_explorador(ruta: Path | None = None,
+                      presupuesto: float = PRESUPUESTO_LUCY):
+    """Vista previa estatica del explorador: autonomia frente a precio de todos
+    los productos, con la mejor autonomia alcanzable para cada presupuesto."""
+    from matplotlib.lines import Line2D
+
+    productos = productos_todos()
+    fig, ax = plt.subplots(figsize=(10.6, 6.4))
+
+    for tipo in ORDEN:
+        dentro = [p for p in productos
+                  if p["tipo"] == tipo and p["precio"] <= presupuesto]
+        fuera = [p for p in productos
+                 if p["tipo"] == tipo and p["precio"] > presupuesto]
+        color = COLOR_TIPO[ETIQUETAS[tipo]]
+        ax.scatter([p["precio"] for p in fuera],
+                   [p["autonomia"] for p in fuera], s=26, color=color,
+                   alpha=0.16, linewidth=0, zorder=2)
+        ax.scatter([p["precio"] for p in dentro],
+                   [p["autonomia"] for p in dentro], s=44, color=color,
+                   edgecolor="white", linewidth=0.8, zorder=3,
+                   label=ETIQUETAS[tipo])
+
+    orden = sorted(productos, key=lambda p: p["precio"])
+    fx, fy, mejor = [0.0], [0], 0
+    for p in orden:
+        if p["autonomia"] > mejor:
+            mejor = p["autonomia"]
+            fx.append(p["precio"])
+            fy.append(mejor)
+    fx.append(max(p["precio"] for p in productos))
+    fy.append(mejor)
+    ax.plot(fx, fy, drawstyle="steps-post", color="#111827", linewidth=2.3,
+            zorder=4)
+
+    ax.axvline(presupuesto, color="#E63946", linewidth=2,
+               linestyle=(0, (1, 2.5)), zorder=1)
+
+    alto = max((p for p in productos if p["precio"] <= presupuesto),
+               key=lambda p: p["autonomia"])
+    ax.scatter([alto["precio"]], [alto["autonomia"]], marker="*", s=300,
+               color="#E63946", edgecolor="white", linewidth=0.9, zorder=6)
+    ax.annotate(f"{alto['autonomia']} km · {ETIQUETAS[alto['tipo']]}",
+                (alto["precio"], alto["autonomia"]), xytext=(10, 8),
+                textcoords="offset points", fontsize=10.5, fontweight="bold",
+                color="#E63946")
+
+    ax.set_xlabel("Precio (USD)", fontsize=12.5)
+    ax.set_ylabel("Autonomía (km)", fontsize=12.5)
+    ax.set_xlim(0, max(p["precio"] for p in productos) * 1.02)
+    ax.set_ylim(0, max(p["autonomia"] for p in productos) * 1.12)
+    ax.set_title(f"Hasta dónde llega un presupuesto de "
+                 f"{_formato(presupuesto)} USD", fontsize=16,
+                 fontweight="bold", pad=42)
+    _leyenda_arriba(ax, [
+        Line2D([0], [0], marker="o", color="none",
+               markerfacecolor=COLOR_TIPO[ETIQUETAS[t]], markeredgecolor="white",
+               markersize=12, label=ETIQUETAS[t]) for t in ORDEN
+    ] + [Line2D([0], [0], color="#111827", linewidth=2.3,
+                label="Mejor autonomía a ese precio")], ncol=4)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(linestyle=":", alpha=0.4, zorder=0)
+    fig.tight_layout()
+    return _guardar(fig, ruta)
+
+
 def ejecutar():
-    """Genera y guarda los graficos de las dos fuentes analizadas."""
+    """Genera y guarda los graficos de las tres fuentes analizadas."""
     CARPETA_GRAFICOS.mkdir(exist_ok=True)
     figura_precios_promedio(CARPETA_GRAFICOS / "precios_promedio_sitios.png")
     figura_disponibilidad(CARPETA_GRAFICOS / "disponibilidad_presupuesto.png")
@@ -800,6 +885,7 @@ def ejecutar():
     figura_encuestas_calidad(CARPETA_GRAFICOS / "encuestas_calidad.png")
     figura_encuestas_real_vs_publicada(
         CARPETA_GRAFICOS / "encuestas_real_vs_publicada.png")
+    figura_explorador(CARPETA_GRAFICOS / "explorador_presupuesto.png")
     return CARPETA_GRAFICOS
 
 
@@ -1024,27 +1110,21 @@ COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
 
 
 def figura_encuestas_degradacion(ruta: Path | None = None):
-    """Burbujas: años de uso (x) frente al % de autonomia perdida (y). El color
-    indica el tipo de vehiculo y el tamaño del punto, la autonomia de recien
-    comprado. Una linea de tendencia muestra como crece la perdida con los años."""
+    """Dispersion: años de uso (x) frente al % de autonomia perdida (y), con una
+    linea de tendencia. El color indica el tipo de vehiculo."""
     from matplotlib.lines import Line2D
 
     encuestas = cargar_encuestas()
     xs = [p["anios_uso"] for p in encuestas]
     ys = [_perdida(p)[1] for p in encuestas]
-    nuevas = [p["autonomia_nueva_km"] for p in encuestas]
-    lo, hi = min(nuevas), max(nuevas)
 
-    def tamano(km: float) -> float:
-        return 90 + (km - lo) / (hi - lo) * 620
-
-    fig, ax = plt.subplots(figsize=(10.4, 7.0))
-    for p in encuestas:
-        ax.scatter(p["anios_uso"], _perdida(p)[1], s=tamano(p["autonomia_nueva_km"]),
-                   color=COLOR_TIPO[ETIQUETAS[p["tipo_vehiculo"]]],
-                   edgecolor="#374151" if p["bateria_cambiada"] else "white",
-                   linewidth=2.4 if p["bateria_cambiada"] else 1.6,
-                   alpha=0.85, zorder=3)
+    fig, ax = plt.subplots(figsize=(10.4, 6.6))
+    for tipo in ORDEN:
+        puntos = [p for p in encuestas if p["tipo_vehiculo"] == tipo]
+        ax.scatter([p["anios_uso"] for p in puntos],
+                   [_perdida(p)[1] for p in puntos], s=150,
+                   color=COLOR_TIPO[ETIQUETAS[tipo]], edgecolor="white",
+                   linewidth=1.6, alpha=0.9, zorder=3)
 
     base = [p for p in encuestas if not p["bateria_cambiada"] and not p["nota"]]
     pendiente, corte = np.polyfit([p["anios_uso"] for p in base],
@@ -1064,8 +1144,7 @@ def figura_encuestas_degradacion(ruta: Path | None = None):
                         ha="center", fontsize=9.5, fontweight="bold",
                         color="#374151")
 
-    ax.set_xlabel("Años de uso\n(el tamaño del punto indica la autonomía de "
-                  "recién comprado)", fontsize=12)
+    ax.set_xlabel("Años de uso", fontsize=12.5)
     ax.set_ylabel("Autonomía perdida (%)", fontsize=12.5)
     ax.set_xlim(-0.4, max(xs) + 0.8)
     ax.set_title("A más años de uso, más autonomía se pierde",
@@ -1078,7 +1157,7 @@ def figura_encuestas_degradacion(ruta: Path | None = None):
     ] + [Line2D([0], [0], color="#6B7280", linewidth=2.2, linestyle="--",
                 label="Tendencia")], ncol=4)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
+    ax.grid(linestyle=":", alpha=0.4, zorder=0)
     fig.tight_layout()
     return _guardar(fig, ruta)
 

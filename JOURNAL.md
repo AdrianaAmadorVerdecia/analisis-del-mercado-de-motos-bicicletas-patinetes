@@ -74,11 +74,17 @@ y los anuncios prometen más autonomía de la que reportan los dueños. Dos caso
 la batería (P11, P16) y uno reporta mejora por asentamiento (P9): se marcan aparte para
 no falsear la degradación.
 
-El gráfico de degradación se rehízo varias veces (dispersión, barras, pendientes) hasta
-dar con uno que muestra a la vez los **años de uso, la autonomía perdida y el tipo de
-vehículo**: un **gráfico de burbujas** (x = años, y = % de pérdida, color = tipo,
-tamaño = autonomía de nuevo) con su línea de tendencia. Se hicieron además un **pastel**
-de la calidad y un **dumbbell** de autonomía real frente a la publicada.
+El gráfico de degradación se rehízo varias veces (dispersión, barras, pendientes,
+burbujas) hasta dar con el definitivo: una **dispersión con línea de tendencia** que
+muestra a la vez los **años de uso** (eje x), la **autonomía perdida** (eje y) y el
+**tipo de vehículo** (color). Se hicieron además un **pastel** de la calidad y un
+**dumbbell** de autonomía real frente a la publicada.
+
+Se añadió un **explorador interactivo** (`interactivo.html`, generado por
+`interactivo.py`): cualquiera escribe un presupuesto y ve hasta dónde le alcanza en
+autonomía, qué vehículo y la mejor opción de cada tipo entre las analizadas. El
+notebook lo muestra incrustado y también se publica con GitHub Pages para verlo en
+el navegador.
 
 Por último se escribieron las **conclusiones generales del estudio**, cruzando las tres
 fuentes: el precio lo explican, en orden, el **tipo de vehículo**, la **autonomía (y su
