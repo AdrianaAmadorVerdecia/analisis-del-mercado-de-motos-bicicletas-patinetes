@@ -6,9 +6,10 @@ organizado por secciones:
 
     CONFIGURACION GENERAL     constantes, colores, etiquetas, sitios
     UTILIDADES               formato de numeros y tablas de markdown
-    PRIMERA FUENTE: INTERNET  los tres sitios (Revolico, CubAmerica, iTENCEL):
-                             tabla de resumen y tres graficos. VEDCA quedó fuera
-                             de internet para usarse luego como mercado aparte.
+    PRIMERA FUENTE: INTERNET  los dos sitios (Revolico e iTENCEL):
+                             tabla de resumen y tres graficos. VEDCA y
+                             CubAmerica quedaron fuera de internet para
+                             usarse luego como mercado aparte.
     OTRAS FUENTES            Telegram, encuestas, mercados (mas adelante)
 
 El notebook `proyecto.ipynb` NO tiene codigo: solo importa desde aqui y muestra
@@ -64,15 +65,6 @@ SITIOS = (
         "moneda": "CUP a USD (745 = 1)",
     },
     {
-        "slug": "cubamerica",
-        "nombre": "CubAmerica",
-        "archivo": "cubamerica_envios.json",
-        "lista": "productos",
-        "precio": "precio_usd",
-        "autonomia": "autonomia_max_km",
-        "moneda": "USD",
-    },
-    {
         "slug": "itencel",
         "nombre": "iTENCEL",
         "archivo": "itencel_anuncios.json",
@@ -82,6 +74,10 @@ SITIOS = (
         "moneda": "mayoría en USD",
     },
 )
+
+# Sitios que se guardaron pero quedaron fuera de la primera fuente (mercados):
+#   - VEDCA (Islagrande): 10 productos en data/vedca_islagrande.json
+#   - CubAmerica:         43 productos en data/cubamerica_envios.json
 
 DICC_SITIOS = {s["slug"]: s for s in SITIOS}
 
@@ -122,7 +118,7 @@ def tabla_markdown(encabezados: list[str], filas: list[list[str]]) -> str:
 
 
 # ==============================================================================
-# PRIMERA FUENTE: INTERNET  (los tres sitios)
+# PRIMERA FUENTE: INTERNET  (los dos sitios)
 # ==============================================================================
 
 def cargar_sitio(sitio: dict) -> list[dict]:
@@ -266,10 +262,41 @@ def _guardar(fig, ruta: Path | None):
     return fig
 
 
-def _leyenda_arriba(ax, casos):
+def _leyenda_arriba(ax, casos, handler_map=None):
     """Leyenda horizontal colocada encima del area del grafico."""
     ax.legend(handles=casos, frameon=False, fontsize=11.5,
-              loc="lower center", bbox_to_anchor=(0.5, 1.01), ncol=4)
+              loc="lower center", bbox_to_anchor=(0.5, 1.01), ncol=4,
+              handler_map=handler_map)
+
+
+class _SegmentoLegendario:
+    """Marcador de leyenda que dibuja un segmento: linea horizontal con dos
+    barras verticales cortas en los extremos (rango minima-maximo)."""
+
+    def legend_artist(self, legend, orig_handle, fontsize, handlebox):
+        import matplotlib.lines as mlines
+
+        x0, y0 = handlebox.xdescent, handlebox.ydescent
+        ancho, alto = handlebox.width, handlebox.height
+        color = orig_handle.get_color()
+        grosor = orig_handle.get_linewidth()
+
+        centro_y = y0 + alto / 2
+        margen = ancho * 0.06
+        linea = mlines.Line2D([x0 + margen, x0 + ancho - margen],
+                              [centro_y, centro_y],
+                              color=color, linewidth=grosor, zorder=3)
+        barra = mlines.Line2D([x0 + margen, x0 + margen],
+                              [centro_y - alto * 0.4, centro_y + alto * 0.4],
+                              color=color, linewidth=grosor, zorder=3)
+        barra2 = mlines.Line2D([x0 + ancho - margen, x0 + ancho - margen],
+                               [centro_y - alto * 0.4, centro_y + alto * 0.4],
+                               color=color, linewidth=grosor, zorder=3)
+        handlebox.add_artist(linea)
+        handlebox.add_artist(barra)
+        handlebox.add_artist(barra2)
+        handlebox.set_clip_on(False)
+        return [linea, barra, barra2]
 
 
 def figura_precios_promedio(ruta: Path | None = None):
@@ -278,7 +305,7 @@ def figura_precios_promedio(ruta: Path | None = None):
 
     tipos = orden_con_productos()
     x = list(range(len(tipos)))
-    ancho = 0.2
+    ancho = 0.35
     maximo = 0
 
     fig, ax = plt.subplots(figsize=(11.5, 6.4))
@@ -287,7 +314,8 @@ def figura_precios_promedio(ruta: Path | None = None):
         valores = [rp[c].get("promedio") if rp[c].get("anuncios") else None
                    for c in tipos]
         maximo = max([maximo] + [v for v in valores if v is not None] or [0])
-        centros = [xi + (i - 1.5) * ancho for xi in x]
+        corrimiento = (i - (len(SITIOS) - 1) / 2) * ancho
+        centros = [xi + corrimiento for xi in x]
         presentes = [(xx, v) for xx, v in zip(centros, valores) if v is not None]
         if not presentes:
             continue
@@ -303,7 +331,7 @@ def figura_precios_promedio(ruta: Path | None = None):
     ax.set_ylabel("Precio promedio (USD)", fontsize=12.5)
     ax.set_ylim(0, maximo * 1.18)
     ax.tick_params(axis="y", labelsize=11)
-    ax.set_title("Precio promedio por tipo de vehículo en los tres sitios",
+    ax.set_title("Precio promedio por tipo de vehículo en los dos sitios",
                  fontsize=16, fontweight="bold", pad=40)
 
     _leyenda_arriba(ax, [
@@ -318,40 +346,55 @@ def figura_precios_promedio(ruta: Path | None = None):
 
 
 def figura_disponibilidad(ruta: Path | None = None):
-    """G2. Barras horizontales: lo que cabe en el presupuesto frente al total."""
+    """G2. Barras horizontales agrupadas por tipo: cuantos productos de cada
+    sitio y categoria entran en el presupuesto frente al total publicado."""
     from matplotlib.patches import Patch
 
-    filas = resumen_alcance_general()
-    nombres = [f["nombre"] for f in filas]
-    totales = [f["total"] for f in filas]
-    alcanzables = [f["alcanzables"] for f in filas]
-    posiciones = list(range(len(nombres)))
+    PALETA_2 = {
+        "revolico": "#4C6EF5",
+        "itencel": "#F4955A",
+    }
 
-    fig, ax = plt.subplots(figsize=(11, 5.4))
-    ax.barh(posiciones, totales, 0.55,
-            color="white", edgecolor="#9CA3AF", linewidth=2, hatch="///", zorder=2)
-    ax.barh(posiciones, alcanzables, 0.55,
-            color=[COLOR_SITIOS[f["slug"]] for f in filas],
-            edgecolor="white", linewidth=2, zorder=3)
+    tipos = orden_con_productos()
+    y = list(range(len(tipos)))
+    alto = 0.35
+    maximo = 0
 
-    for p, n_dentro, n_total in zip(posiciones, alcanzables, totales):
-        ax.text(n_dentro + (max(totales) * 0.02), p,
-                f"{n_dentro} de {n_total}", va="center", fontsize=13,
-                fontweight="bold")
+    filas = {s["slug"]: resumen_presupuesto(s) for s in SITIOS}
+    for c in tipos:
+        for s in SITIOS:
+            maximo = max(maximo, filas[s["slug"]][c]["anuncios"])
 
-    ax.set_yticks(posiciones)
-    ax.set_yticklabels(nombres, fontsize=13)
+    fig, ax = plt.subplots(figsize=(11.5, 5.6))
+    for i, sitio in enumerate(SITIOS):
+        rp = filas[sitio["slug"]]
+        totales = [rp[c]["anuncios"] for c in tipos]
+        alcanzables = [rp[c]["alcanzables"] for c in tipos]
+        corrimiento = (i - (len(SITIOS) - 1) / 2) * alto
+        centros = [yi + corrimiento for yi in y]
+        ax.barh(centros, totales, alto,
+                color="white", edgecolor="#B9C0C9", linewidth=2, hatch="///", zorder=2)
+        ax.barh(centros, alcanzables, alto,
+                color=PALETA_2[sitio["slug"]],
+                edgecolor="white", linewidth=2, zorder=3)
+        for cc, t, a in zip(centros, totales, alcanzables):
+            ax.text(t + maximo * 0.02, cc, f"{a} de {t}",
+                    va="center", fontsize=10.5, fontweight="bold")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([ETIQUETAS[c] for c in tipos], fontsize=12.5)
     ax.set_xlabel("Número de productos", fontsize=12.5)
-    ax.set_xlim(0, max(totales) * 1.28)
-    ax.tick_params(axis="x", labelsize=11.5)
-    ax.set_title(f"Productos que caben en el presupuesto de {PRESUPUESTO_LUCY} USD "
-                 "en cada sitio", fontsize=16, fontweight="bold", pad=44)
+    ax.set_xlim(0, maximo * 1.25)
+    ax.tick_params(axis="x", labelsize=11)
+    ax.set_title(f"Productos que caben en el presupuesto de {PRESUPUESTO_LUCY} USD, "
+                 "por tipo de vehículo y sitio", fontsize=16, fontweight="bold", pad=44)
 
     _leyenda_arriba(ax, [
-        Patch(facecolor="#6B7280", edgecolor="white",
-              label="Barra sólida: productos dentro del presupuesto"),
-        Patch(facecolor="white", edgecolor="#9CA3AF", hatch="///",
-              label="Barra rayada: productos publicados en total"),
+        Patch(facecolor=PALETA_2[s["slug"]], edgecolor="white",
+              label=f"{s['nombre']} (cabe en el presupuesto)") for s in SITIOS
+    ] + [
+        Patch(facecolor="white", edgecolor="#B9C0C9", hatch="///",
+              label="Total publicado"),
     ])
 
     ax.spines[["top", "right"]].set_visible(False)
@@ -361,8 +404,9 @@ def figura_disponibilidad(ruta: Path | None = None):
 
 
 def figura_alcance_general(ruta: Path | None = None):
-    """G3. Barras por sitio: autonomia alcanzable y su promedio con el presupuesto."""
-    from matplotlib.patches import Patch
+    """G3. Dot plot / range plot: por sitio, rango de autonomia alcanzable
+    (linea del minimo al maximo) con el promedio marcado como punto rojo."""
+    from matplotlib.lines import Line2D
 
     filas = resumen_alcance_general()
     nombres = [f["nombre"] for f in filas]
@@ -372,45 +416,48 @@ def figura_alcance_general(ruta: Path | None = None):
     alcanzables = [f["alcanzables"] for f in filas]
     totales = [f["total"] for f in filas]
     posiciones = list(range(len(nombres)))
+    tope = max(maximos) if max(maximos) else 1
 
-    fig, ax = plt.subplots(figsize=(11, 5.6))
-    for p, slug, vmin, vmed, vmax, n_dentro, n_total in zip(
-            posiciones, [f["slug"] for f in filas], minimos, promedios, maximos,
-            alcanzables, totales):
-        color = COLOR_SITIOS[slug]
-        if n_dentro == 0:
-            ax.text(3, p, "sin productos dentro del presupuesto", va="center",
-                    fontsize=12.5, color="#6B7280")
-            continue
-        ax.barh(p, vmax - vmin, 0.42, left=vmin,
-                color=color, alpha=0.32, edgecolor=color, linewidth=1.6, zorder=2)
-        ax.barh(p, vmed, 0.42, color=color, edgecolor="white", linewidth=2, zorder=3)
-        ax.plot([vmed, vmed], [p - 0.29, p + 0.29], color="white", linewidth=4,
-                zorder=4, alpha=0.85)
-        ax.text(vmax + 3, p, f"{vmin:.0f} – {vmax:.0f} km", va="center",
-                fontsize=12, fontweight="bold", color=color)
-        ax.text(vmed / 2, p, f"promedio {vmed:.0f} km", va="center", ha="center",
-                fontsize=12.5, fontweight="bold", color="white", zorder=5)
+    fig, ax = plt.subplots(figsize=(11.5, 4.8))
+    for p, vmin, vmed, vmax in zip(
+            posiciones, minimos, promedios, maximos):
+        ax.plot([vmin, vmax], [p, p], color="#4B5563", linewidth=3,
+                solid_capstyle="round", zorder=2)
+        ax.plot([vmin, vmin], [p - 0.25, p + 0.25], color="#4B5563",
+                linewidth=3, zorder=3)
+        ax.plot([vmax, vmax], [p - 0.25, p + 0.25], color="#4B5563",
+                linewidth=3, zorder=3)
+        ax.plot([vmed], [p], linestyle="none", marker="o", color="#E63946",
+                markersize=17, markeredgecolor="white", markeredgewidth=2, zorder=4)
+        ax.text(vmin, p + 0.34, f"{vmin:.0f}", ha="center", va="bottom",
+                fontsize=11, color="#4B5563", fontweight="bold")
+        ax.text(vmax, p + 0.34, f"{vmax:.0f}", ha="center", va="bottom",
+                fontsize=11, color="#4B5563", fontweight="bold")
+        ax.text(vmed, p - 0.34, f"promedio {vmed:.0f} km", ha="center", va="top",
+                fontsize=11.5, fontweight="bold", color="#B1121C")
 
     ax.set_yticks(posiciones)
     ax.set_yticklabels(
-        [f"{nombre} ({n_dentro} de {n_total})"
+        [f"{nombre}  ({n_dentro} de {n_total})"
          for nombre, n_dentro, n_total in zip(nombres, alcanzables, totales)],
         fontsize=13)
     ax.set_xlabel("Autonomía (km)", fontsize=12.5)
-    ax.set_xlim(0, max(maximos) * 1.32 if max(maximos) else 1)
-    ax.set_ylim(-0.6, len(nombres) - 0.4)
+    ax.set_xlim(0, tope * 1.18)
+    ax.set_ylim(-0.7, len(nombres) - 0.3)
     ax.tick_params(axis="x", labelsize=11.5)
     ax.set_title("Hasta dónde llega Lucy con su presupuesto de "
                  f"{PRESUPUESTO_LUCY} USD en cada sitio (autonomía alcanzable)",
-                 fontsize=16, fontweight="bold", pad=52)
+                 fontsize=16, fontweight="bold", pad=44)
 
-    _leyenda_arriba(ax, [
-        Patch(facecolor="#6B7280", edgecolor="white",
-              label="Barra sólida: autonomía promedio de lo que entra en el presupuesto"),
-        Patch(facecolor="#6B7280", edgecolor="#6B7280", alpha=0.32,
-              label="Barra translúcida: rango entre el mínimo y el máximo"),
-    ])
+    seg_rango = Line2D([0, 1], [0, 0], color="#4B5563", linewidth=3,
+                       label="Rango de autonomía (mín – máx, con marcas de extremo)")
+    _leyenda_arriba(
+        ax,
+        [seg_rango,
+         Line2D([0], [0], color="none", marker="o", markerfacecolor="#E63946",
+                markeredgecolor="white", markersize=14,
+                label="Promedio de lo que cabe en el presupuesto")],
+        handler_map={seg_rango: _SegmentoLegendario()})
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
@@ -452,5 +499,5 @@ if __name__ == "__main__":
     destino = ejecutar()
     print("Gráficos guardados en:", destino)
     print()
-    print("TABLA DE RESUMEN DE LOS TRES SITIOS")
+    print("TABLA DE RESUMEN DE LOS DOS SITIOS")
     print(tabla_resumen_markdown())
