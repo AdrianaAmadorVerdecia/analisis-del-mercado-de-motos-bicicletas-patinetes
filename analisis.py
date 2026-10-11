@@ -788,85 +788,63 @@ def figura_autonomia_heatmap(ruta_publicados: Path | None = None,
 
 def productos_todos() -> list[dict]:
     """Todos los productos analizados (Internet y Mercado) con tipo, marca,
-    sitio, precio en USD y autonomia en km."""
+    fuente, sitio, precio en USD y autonomia en km."""
     items = []
-    for sitio in SITIOS + MERCADOS:
-        for p in cargar_sitio(sitio):
-            autonomia = _autonomia(sitio, p)
-            if not autonomia:
-                continue
-            items.append({
-                "tipo": p["tipo_vehiculo"],
-                "marca": p.get("marca") or "Sin marca",
-                "sitio": sitio["nombre"],
-                "precio": round(float(_precio(sitio, p))),
-                "autonomia": int(autonomia),
-            })
+    for fuente, lista in (("Internet", SITIOS), ("Mercado", MERCADOS)):
+        for sitio in lista:
+            for p in cargar_sitio(sitio):
+                autonomia = _autonomia(sitio, p)
+                if not autonomia:
+                    continue
+                items.append({
+                    "tipo": p["tipo_vehiculo"],
+                    "marca": p.get("marca") or "Sin marca",
+                    "fuente": fuente,
+                    "sitio": sitio["nombre"],
+                    "precio": round(float(_precio(sitio, p))),
+                    "autonomia": int(autonomia),
+                })
     return items
 
 
 def figura_explorador(ruta: Path | None = None,
                       presupuesto: float = PRESUPUESTO_LUCY):
-    """Vista previa estatica del explorador: autonomia frente a precio de todos
-    los productos, con la mejor autonomia alcanzable para cada presupuesto."""
-    from matplotlib.lines import Line2D
+    """Vista previa estatica del explorador: para cada tipo de vehiculo, la
+    mayor autonomia alcanzable en cada fuente (Internet y Mercado) con ese
+    presupuesto. Sin nubes de puntos: solo la mejor opcion de cada caso."""
+    from matplotlib.patches import Patch
 
     productos = productos_todos()
-    fig, ax = plt.subplots(figsize=(10.6, 6.4))
+    fuentes = (("Internet", "#2563EB"), ("Mercado", "#EA580C"))
+    ancho = 0.38
+    fig, ax = plt.subplots(figsize=(10.6, 6.0))
 
-    for tipo in ORDEN:
-        dentro = [p for p in productos
-                  if p["tipo"] == tipo and p["precio"] <= presupuesto]
-        fuera = [p for p in productos
-                 if p["tipo"] == tipo and p["precio"] > presupuesto]
-        color = COLOR_TIPO[ETIQUETAS[tipo]]
-        ax.scatter([p["precio"] for p in fuera],
-                   [p["autonomia"] for p in fuera], s=26, color=color,
-                   alpha=0.16, linewidth=0, zorder=2)
-        ax.scatter([p["precio"] for p in dentro],
-                   [p["autonomia"] for p in dentro], s=44, color=color,
-                   edgecolor="white", linewidth=0.8, zorder=3,
-                   label=ETIQUETAS[tipo])
+    posiciones = list(range(len(ORDEN)))
+    for i, (fuente, color) in enumerate(fuentes):
+        alturas = []
+        for tipo in ORDEN:
+            dentro = [p for p in productos
+                      if p["fuente"] == fuente and p["tipo"] == tipo
+                      and p["precio"] <= presupuesto]
+            alturas.append(max((p["autonomia"] for p in dentro), default=0))
+        xs = [x + (i - 0.5) * ancho for x in posiciones]
+        ax.bar(xs, alturas, width=ancho, color=color, zorder=3)
+        for x, v in zip(xs, alturas):
+            if v:
+                ax.text(x, v + 2, f"{v}", ha="center", va="bottom",
+                        fontsize=10, fontweight="bold", color="#374151")
 
-    orden = sorted(productos, key=lambda p: p["precio"])
-    fx, fy, mejor = [0.0], [0], 0
-    for p in orden:
-        if p["autonomia"] > mejor:
-            mejor = p["autonomia"]
-            fx.append(p["precio"])
-            fy.append(mejor)
-    fx.append(max(p["precio"] for p in productos))
-    fy.append(mejor)
-    ax.plot(fx, fy, drawstyle="steps-post", color="#111827", linewidth=2.3,
-            zorder=4)
-
-    ax.axvline(presupuesto, color="#E63946", linewidth=2,
-               linestyle=(0, (1, 2.5)), zorder=1)
-
-    alto = max((p for p in productos if p["precio"] <= presupuesto),
-               key=lambda p: p["autonomia"])
-    ax.scatter([alto["precio"]], [alto["autonomia"]], marker="*", s=300,
-               color="#E63946", edgecolor="white", linewidth=0.9, zorder=6)
-    ax.annotate(f"{alto['autonomia']} km · {ETIQUETAS[alto['tipo']]}",
-                (alto["precio"], alto["autonomia"]), xytext=(10, 8),
-                textcoords="offset points", fontsize=10.5, fontweight="bold",
-                color="#E63946")
-
-    ax.set_xlabel("Precio (USD)", fontsize=12.5)
-    ax.set_ylabel("Autonomía (km)", fontsize=12.5)
-    ax.set_xlim(0, max(p["precio"] for p in productos) * 1.02)
-    ax.set_ylim(0, max(p["autonomia"] for p in productos) * 1.12)
-    ax.set_title(f"Hasta dónde llega un presupuesto de "
+    techo = max(p["autonomia"] for p in productos)
+    ax.set_xticks(posiciones)
+    ax.set_xticklabels([ETIQUETAS[t] for t in ORDEN], fontsize=12)
+    ax.set_ylabel("Autonomía máxima alcanzable (km)", fontsize=12.5)
+    ax.set_ylim(0, techo * 1.18)
+    ax.set_title(f"En qué fuente y qué tipo conviene con "
                  f"{_formato(presupuesto)} USD", fontsize=16,
                  fontweight="bold", pad=42)
-    _leyenda_arriba(ax, [
-        Line2D([0], [0], marker="o", color="none",
-               markerfacecolor=COLOR_TIPO[ETIQUETAS[t]], markeredgecolor="white",
-               markersize=12, label=ETIQUETAS[t]) for t in ORDEN
-    ] + [Line2D([0], [0], color="#111827", linewidth=2.3,
-                label="Mejor autonomía a ese precio")], ncol=4)
+    _leyenda_arriba(ax, [Patch(facecolor=c, label=f) for f, c in fuentes], ncol=2)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(linestyle=":", alpha=0.4, zorder=0)
+    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
     fig.tight_layout()
     return _guardar(fig, ruta)
 

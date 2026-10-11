@@ -81,10 +81,10 @@ muestra a la vez los **años de uso** (eje x), la **autonomía perdida** (eje y)
 **dumbbell** de autonomía real frente a la publicada.
 
 Se añadió un **explorador interactivo** (`interactivo.html`, generado por
-`interactivo.py`): cualquiera escribe un presupuesto y ve hasta dónde le alcanza en
-autonomía, qué vehículo y la mejor opción de cada tipo entre las analizadas. El
-notebook lo muestra incrustado y también se publica con GitHub Pages para verlo en
-el navegador.
+`interactivo.py`): cualquiera escribe su presupuesto y ve, al instante, en qué
+**fuente** (Internet o Mercado) y con qué **tipo de vehículo** llega más lejos, con
+la mejor opción de cada fuente y de cada tipo comparadas con barras (sin nubes de
+puntos). El notebook lo muestra incrustado y también se publica con GitHub Pages.
 
 Por último se escribieron las **conclusiones generales del estudio**, cruzando las tres
 fuentes: el precio lo explican, en orden, el **tipo de vehículo**, la **autonomía (y su
