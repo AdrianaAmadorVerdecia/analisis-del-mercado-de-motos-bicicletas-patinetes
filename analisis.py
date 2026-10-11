@@ -858,8 +858,8 @@ def ejecutar():
     figura_autonomia_heatmap(
         CARPETA_GRAFICOS / "autonomia_mercado_publicados.png",
         CARPETA_GRAFICOS / "autonomia_mercado_presupuesto.png")
-    figura_encuestas_degradacion(
-        CARPETA_GRAFICOS / "encuestas_uso_degradacion.png")
+    figura_costo_autonomia(
+        CARPETA_GRAFICOS / "costo_autonomia_encuestas.png")
     figura_encuestas_calidad(CARPETA_GRAFICOS / "encuestas_calidad.png")
     figura_encuestas_real_vs_publicada(
         CARPETA_GRAFICOS / "encuestas_real_vs_publicada.png")
@@ -870,8 +870,8 @@ def ejecutar():
 # ==============================================================================
 # TERCERA FUENTE: ENCUESTAS  (personas que ya tienen un vehiculo electrico)
 #   Bloque A: tabla descriptiva por persona.
-#   Bloque B: autonomia por tipo, degradacion por marca, calidad de las
-#             opiniones y contraste de la autonomia real con la publicada.
+#   Bloque B: autonomia por tipo, costo de la autonomia (USD por km), calidad de
+#             las opiniones y contraste de la autonomia real con la publicada.
 # ==============================================================================
 
 def cargar_encuestas() -> list[dict]:
@@ -956,64 +956,6 @@ def tabla_encuestas_tipo_markdown() -> str:
     )
 
 
-def degradacion_por_marca() -> list[dict]:
-    """Bloque B. Por marca: cuantas personas, años de uso promedio y caida de la
-    autonomia (%). Solo marcas con al menos una persona."""
-    encuestas = cargar_encuestas()
-    por_marca: dict[str, dict] = {}
-    for p in encuestas:
-        dato = por_marca.setdefault(p["marca"], {
-            "marca": p["marca"], "n": 0, "tipos": set(),
-            "anios": [], "nueva": [], "actual": [], "perdida": [],
-            "notas": [],
-        })
-        dato["n"] += 1
-        dato["tipos"].add(ETIQUETAS[p["tipo_vehiculo"]])
-        dato["anios"].append(p["anios_uso"])
-        dato["nueva"].append(p["autonomia_nueva_km"])
-        dato["actual"].append(p["autonomia_actual_km"])
-        dato["perdida"].append(_perdida(p)[1])
-        if p["nota"]:
-            dato["notas"].append(f"{p['id'].replace('PERSONA ', 'P')}: {p['nota']}")
-
-    filas = []
-    for dato in por_marca.values():
-        filas.append({
-            "marca": dato["marca"],
-            "n": dato["n"],
-            "tipos": ", ".join(sorted(dato["tipos"])),
-            "anios_prom": stat.mean(dato["anios"]),
-            "nueva_prom": stat.mean(dato["nueva"]),
-            "actual_prom": stat.mean(dato["actual"]),
-            "perdida_prom": stat.mean(dato["perdida"]),
-            "observaciones": " ".join(dato["notas"]) if dato["notas"] else "—",
-        })
-    filas.sort(key=lambda f: f["perdida_prom"])
-    return filas
-
-
-def tabla_degradacion_markdown() -> str:
-    """Tabla de degradacion de la autonomia por marca."""
-    filas = []
-    for f in degradacion_por_marca():
-        filas.append([
-            f["marca"],
-            str(f["n"]),
-            f["tipos"],
-            _formato(f["anios_prom"], 1),
-            _formato(f["nueva_prom"]),
-            _formato(f["actual_prom"]),
-            _formato(f["perdida_prom"], 1) + " %",
-            f["observaciones"],
-        ])
-    return tabla_markdown(
-        ["Marca", "Personas", "Tipo(s)", "Años de uso prom.",
-         "Autonomía nueva prom. (km)", "Autonomía actual prom. (km)",
-         "Pérdida prom. (%)", "Observaciones"],
-        filas,
-    )
-
-
 def calidad_resumen() -> dict:
     """Bloque B. Cuantas opiniones hay de cada nivel de calidad."""
     conteo = Counter(p["calidad"] for p in cargar_encuestas())
@@ -1087,59 +1029,67 @@ COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
               "Patinete eléctrico": "#F9A602"}
 
 
-def rangos_degradacion() -> list[dict]:
-    """Perdida de autonomia en promedio por rango de años de uso. Deja fuera los
-    casos que no reflejan el desgaste normal (bateria cambiada o asentamiento)."""
-    rangos = [
-        ("menos de 1 año", 0.0, 1.0),
-        ("1 a 2 años", 1.0, 2.0),
-        ("2 a 3 años", 2.0, 3.0),
-        ("3 años o más", 3.0, float("inf")),
-    ]
-    base = [p for p in cargar_encuestas()
-            if not p["bateria_cambiada"] and not p["nota"]]
+def costo_autonomia_por_tipo() -> list[dict]:
+    """USD por km de autonomia, por tipo: lo que costaba al comprar (autonomia de
+    fabrica) y lo que cuesta hoy (autonomia real que entrega el vehiculo)."""
     filas = []
-    for etiqueta, inicio, fin in rangos:
-        grupo = [p for p in base if inicio <= p["anios_uso"] < fin]
-        if not grupo:
-            continue
+    for f in resumen_encuestas_tipo():
         filas.append({
-            "etiqueta": etiqueta,
-            "n": len(grupo),
-            "perdida_prom": stat.mean([_perdida(p)[1] for p in grupo]),
+            "categoria": f["categoria"],
+            "n": f["n"],
+            "precio": f["precio_prom"],
+            "usd_km_fabrica": f["precio_prom"] / f["nueva_prom"],
+            "usd_km_real": f["precio_prom"] / f["actual_prom"],
         })
     return filas
 
 
-def figura_encuestas_degradacion(ruta: Path | None = None):
-    """Barras: % de autonomia perdida en promedio en cada rango de años de uso."""
-    filas = rangos_degradacion()
-    etiquetas = [f["etiqueta"] for f in filas]
-    valores = [f["perdida_prom"] for f in filas]
-    personas = [f["n"] for f in filas]
+def figura_costo_autonomia(ruta: Path | None = None):
+    """Barras agrupadas por tipo: USD por km de autonomia con la autonomia de
+    fabrica (lo que se pago) frente a la autonomia real de hoy."""
+    from matplotlib.patches import Patch
 
-    colores = ["#FDDBC7", "#F4A582", "#D6604D", "#B2182B"][:len(filas)]
+    filas = costo_autonomia_por_tipo()
+    etiquetas = [ETIQUETAS[f["categoria"]] for f in filas]
+    fabrica = [f["usd_km_fabrica"] for f in filas]
+    real = [f["usd_km_real"] for f in filas]
+    x = np.arange(len(filas))
+    ancho = 0.38
+    color_fabrica, color_real = "#94A3B8", "#E63946"
+    techo = max(real)
 
-    fig, ax = plt.subplots(figsize=(9.8, 6.0))
-    ax.bar(range(len(filas)), valores, width=0.62, color=colores, zorder=3)
-    for i, (valor, n) in enumerate(zip(valores, personas)):
-        ax.text(i, valor + max(valores) * 0.02,
-                f"{_formato(valor, 1)} %\n({n} pers.)",
-                ha="center", va="bottom", fontsize=10.5, fontweight="bold",
-                color="#374151")
+    fig, ax = plt.subplots(figsize=(10.0, 6.2))
+    ax.bar(x - ancho / 2, fabrica, ancho, color=color_fabrica, zorder=3)
+    ax.bar(x + ancho / 2, real, ancho, color=color_real, zorder=3)
 
-    ax.set_xticks(range(len(filas)))
-    ax.set_xticklabels(etiquetas, fontsize=12)
-    ax.set_xlabel("Tiempo de uso", fontsize=12.5)
-    ax.set_ylabel("Autonomía perdida en promedio (%)", fontsize=12.5)
-    ax.set_ylim(0, max(valores) * 1.24)
-    ax.set_title("La autonomía se pierde más con los años de uso",
-                 fontsize=16, fontweight="bold", pad=18)
+    for i in range(len(filas)):
+        ax.text(x[i] - ancho / 2, fabrica[i] + techo * 0.02,
+                _formato(fabrica[i], 1), ha="center", va="bottom",
+                fontsize=10.5, fontweight="bold", color="#475569")
+        ax.text(x[i] + ancho / 2, real[i] + techo * 0.02,
+                _formato(real[i], 1), ha="center", va="bottom",
+                fontsize=10.5, fontweight="bold", color="#B91C1C")
+        subida = (real[i] / fabrica[i] - 1) * 100
+        ax.text(x[i] + ancho / 2, real[i] + techo * 0.11,
+                f"+{_formato(subida, 0)} %", ha="center", va="bottom",
+                fontsize=12, fontweight="bold", color="#B91C1C")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(etiquetas, fontsize=12.5)
+    ax.set_ylabel("USD por kilómetro de autonomía", fontsize=12.5)
+    ax.set_ylim(0, techo * 1.30)
+    ax.set_title("Cada kilómetro real cuesta más que el que pagaste",
+                 fontsize=16, fontweight="bold", pad=42)
+    _leyenda_arriba(ax, [
+        Patch(facecolor=color_fabrica, label="Al comprar (autonomía de fábrica)"),
+        Patch(facecolor=color_real, label="Hoy (autonomía real)"),
+    ], ncol=2)
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
     fig.text(0.5, 0.008,
-             "Sin contar a P9 (batería asentada) ni a P11 y P16 (cambiaron "
-             "la batería).", ha="center", fontsize=10, color="#6B7280")
+             "USD por km = precio ÷ autonomía, con la autonomía de fábrica o la "
+             "real de hoy. Promedio de las personas de cada tipo.",
+             ha="center", fontsize=9.5, color="#6B7280")
     fig.tight_layout(rect=(0, 0.03, 1, 1))
     return _guardar(fig, ruta)
 
@@ -1267,8 +1217,6 @@ if __name__ == "__main__":
     print()
     print("TERCERA FUENTE: ENCUESTAS A PERSONAS")
     print(tabla_encuestas_tipo_markdown())
-    print()
-    print(tabla_degradacion_markdown())
     print()
     print(tabla_calidad_markdown())
     print()
