@@ -1087,56 +1087,60 @@ COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
               "Patinete eléctrico": "#F9A602"}
 
 
+def rangos_degradacion() -> list[dict]:
+    """Perdida de autonomia en promedio por rango de años de uso. Deja fuera los
+    casos que no reflejan el desgaste normal (bateria cambiada o asentamiento)."""
+    rangos = [
+        ("menos de 1 año", 0.0, 1.0),
+        ("1 a 2 años", 1.0, 2.0),
+        ("2 a 3 años", 2.0, 3.0),
+        ("3 años o más", 3.0, float("inf")),
+    ]
+    base = [p for p in cargar_encuestas()
+            if not p["bateria_cambiada"] and not p["nota"]]
+    filas = []
+    for etiqueta, inicio, fin in rangos:
+        grupo = [p for p in base if inicio <= p["anios_uso"] < fin]
+        if not grupo:
+            continue
+        filas.append({
+            "etiqueta": etiqueta,
+            "n": len(grupo),
+            "perdida_prom": stat.mean([_perdida(p)[1] for p in grupo]),
+        })
+    return filas
+
+
 def figura_encuestas_degradacion(ruta: Path | None = None):
-    """Dispersion: años de uso (x) frente al % de autonomia perdida (y), con una
-    linea de tendencia. El color indica el tipo de vehiculo."""
-    from matplotlib.lines import Line2D
+    """Barras: % de autonomia perdida en promedio en cada rango de años de uso."""
+    filas = rangos_degradacion()
+    etiquetas = [f["etiqueta"] for f in filas]
+    valores = [f["perdida_prom"] for f in filas]
+    personas = [f["n"] for f in filas]
 
-    encuestas = cargar_encuestas()
-    xs = [p["anios_uso"] for p in encuestas]
-    ys = [_perdida(p)[1] for p in encuestas]
+    colores = ["#FDDBC7", "#F4A582", "#D6604D", "#B2182B"][:len(filas)]
 
-    fig, ax = plt.subplots(figsize=(10.4, 6.6))
-    for tipo in ORDEN:
-        puntos = [p for p in encuestas if p["tipo_vehiculo"] == tipo]
-        ax.scatter([p["anios_uso"] for p in puntos],
-                   [_perdida(p)[1] for p in puntos], s=150,
-                   color=COLOR_TIPO[ETIQUETAS[tipo]], edgecolor="white",
-                   linewidth=1.6, alpha=0.9, zorder=3)
+    fig, ax = plt.subplots(figsize=(9.8, 6.0))
+    ax.bar(range(len(filas)), valores, width=0.62, color=colores, zorder=3)
+    for i, (valor, n) in enumerate(zip(valores, personas)):
+        ax.text(i, valor + max(valores) * 0.02,
+                f"{_formato(valor, 1)} %\n({n} pers.)",
+                ha="center", va="bottom", fontsize=10.5, fontweight="bold",
+                color="#374151")
 
-    base = [p for p in encuestas if not p["bateria_cambiada"] and not p["nota"]]
-    pendiente, corte = np.polyfit([p["anios_uso"] for p in base],
-                                  [_perdida(p)[1] for p in base], 1)
-    xr = np.linspace(min(xs), max(xs), 50)
-    ax.plot(xr, pendiente * xr + corte, "--", color="#6B7280",
-            linewidth=2.2, zorder=2)
-
-    ax.axhline(0, color="#9CA3AF", linewidth=1.2, linestyle=":", zorder=1)
-
-    for p in encuestas:
-        _, porciento = _perdida(p)
-        if p["bateria_cambiada"] or p["nota"] or porciento < 0:
-            ax.annotate(p["id"].replace("PERSONA ", "P"),
-                        (p["anios_uso"], porciento),
-                        textcoords="offset points", xytext=(0, 13),
-                        ha="center", fontsize=9.5, fontweight="bold",
-                        color="#374151")
-
-    ax.set_xlabel("Años de uso", fontsize=12.5)
-    ax.set_ylabel("Autonomía perdida (%)", fontsize=12.5)
-    ax.set_xlim(-0.4, max(xs) + 0.8)
-    ax.set_title("A más años de uso, más autonomía se pierde",
-                 fontsize=16, fontweight="bold", pad=42)
-    _leyenda_arriba(ax, [
-        Line2D([0], [0], marker="o", color="none",
-               markerfacecolor=COLOR_TIPO[ETIQUETAS[t]],
-               markeredgecolor="white", markersize=12, label=ETIQUETAS[t])
-        for t in ORDEN
-    ] + [Line2D([0], [0], color="#6B7280", linewidth=2.2, linestyle="--",
-                label="Tendencia")], ncol=4)
+    ax.set_xticks(range(len(filas)))
+    ax.set_xticklabels(etiquetas, fontsize=12)
+    ax.set_xlabel("Tiempo de uso", fontsize=12.5)
+    ax.set_ylabel("Autonomía perdida en promedio (%)", fontsize=12.5)
+    ax.set_ylim(0, max(valores) * 1.24)
+    ax.set_title("La autonomía se pierde más con los años de uso",
+                 fontsize=16, fontweight="bold", pad=18)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(linestyle=":", alpha=0.4, zorder=0)
-    fig.tight_layout()
+    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
+    fig.text(0.5, 0.008,
+             "Sin contar a P9 (batería asentada) ni a P11 y P16 (cambiaron "
+             "la batería).", ha="center", fontsize=10, color="#6B7280")
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
     return _guardar(fig, ruta)
 
 
