@@ -858,8 +858,6 @@ def ejecutar():
     figura_autonomia_heatmap(
         CARPETA_GRAFICOS / "autonomia_mercado_publicados.png",
         CARPETA_GRAFICOS / "autonomia_mercado_presupuesto.png")
-    figura_costo_autonomia(
-        CARPETA_GRAFICOS / "costo_autonomia_encuestas.png")
     figura_encuestas_calidad(CARPETA_GRAFICOS / "encuestas_calidad.png")
     figura_encuestas_real_vs_publicada(
         CARPETA_GRAFICOS / "encuestas_real_vs_publicada.png")
@@ -870,8 +868,8 @@ def ejecutar():
 # ==============================================================================
 # TERCERA FUENTE: ENCUESTAS  (personas que ya tienen un vehiculo electrico)
 #   Bloque A: tabla descriptiva por persona.
-#   Bloque B: autonomia por tipo, costo de la autonomia (USD por km), calidad de
-#             las opiniones y contraste de la autonomia real con la publicada.
+#   Bloque B: autonomia por tipo, calidad de las opiniones y contraste de la
+#             autonomia real con la publicada.
 # ==============================================================================
 
 def cargar_encuestas() -> list[dict]:
@@ -1029,123 +1027,73 @@ COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
               "Patinete eléctrico": "#F9A602"}
 
 
-def costo_autonomia_por_tipo() -> list[dict]:
-    """USD por km de autonomia, por tipo: lo que costaba al comprar (autonomia de
-    fabrica) y lo que cuesta hoy (autonomia real que entrega el vehiculo)."""
-    filas = []
-    for f in resumen_encuestas_tipo():
-        filas.append({
-            "categoria": f["categoria"],
-            "n": f["n"],
-            "precio": f["precio_prom"],
-            "usd_km_fabrica": f["precio_prom"] / f["nueva_prom"],
-            "usd_km_real": f["precio_prom"] / f["actual_prom"],
-        })
-    return filas
-
-
-def figura_costo_autonomia(ruta: Path | None = None):
-    """Barras agrupadas por tipo: USD por km de autonomia con la autonomia de
-    fabrica (lo que se pago) frente a la autonomia real de hoy."""
-    from matplotlib.patches import Patch
-
-    filas = costo_autonomia_por_tipo()
-    etiquetas = [ETIQUETAS[f["categoria"]] for f in filas]
-    fabrica = [f["usd_km_fabrica"] for f in filas]
-    real = [f["usd_km_real"] for f in filas]
-    x = np.arange(len(filas))
-    ancho = 0.38
-    color_fabrica, color_real = "#94A3B8", "#E63946"
-    techo = max(real)
-
-    fig, ax = plt.subplots(figsize=(10.0, 6.2))
-    ax.bar(x - ancho / 2, fabrica, ancho, color=color_fabrica, zorder=3)
-    ax.bar(x + ancho / 2, real, ancho, color=color_real, zorder=3)
-
-    for i in range(len(filas)):
-        ax.text(x[i] - ancho / 2, fabrica[i] + techo * 0.02,
-                _formato(fabrica[i], 1), ha="center", va="bottom",
-                fontsize=10.5, fontweight="bold", color="#475569")
-        ax.text(x[i] + ancho / 2, real[i] + techo * 0.02,
-                _formato(real[i], 1), ha="center", va="bottom",
-                fontsize=10.5, fontweight="bold", color="#B91C1C")
-        subida = (real[i] / fabrica[i] - 1) * 100
-        ax.text(x[i] + ancho / 2, real[i] + techo * 0.11,
-                f"+{_formato(subida, 0)} %", ha="center", va="bottom",
-                fontsize=12, fontweight="bold", color="#B91C1C")
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(etiquetas, fontsize=12.5)
-    ax.set_ylabel("USD por kilómetro de autonomía", fontsize=12.5)
-    ax.set_ylim(0, techo * 1.30)
-    ax.set_title("Cada kilómetro real cuesta más que el que pagaste",
-                 fontsize=16, fontweight="bold", pad=42)
-    _leyenda_arriba(ax, [
-        Patch(facecolor=color_fabrica, label="Al comprar (autonomía de fábrica)"),
-        Patch(facecolor=color_real, label="Hoy (autonomía real)"),
-    ], ncol=2)
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4, zorder=0)
-    fig.text(0.5, 0.008,
-             "USD por km = precio ÷ autonomía, con la autonomía de fábrica o la "
-             "real de hoy. Promedio de las personas de cada tipo.",
-             ha="center", fontsize=9.5, color="#6B7280")
-    fig.tight_layout(rect=(0, 0.03, 1, 1))
-    return _guardar(fig, ruta)
-
-
 def figura_encuestas_real_vs_publicada(ruta: Path | None = None):
-    """Dumbbell: por tipo, la autonomia real de los dueños frente a la
-    publicada en Internet y en Mercado, unidas por una linea."""
+    """Puntos: la autonomia que anuncia cada fuente (x) frente a la autonomia
+    real de fabrica de los dueños (y). La diagonal marca 'el anuncio se cumple':
+    por debajo, el anuncio promete de mas."""
     from matplotlib.lines import Line2D
 
     filas = real_vs_publicada()
-    tipos = [f["categoria"] for f in filas]
-    y = list(range(len(tipos)))
-    color_real, color_internet, color_mercado = "#E63946", "#1D6FE0", "#10B981"
+    tope = 125
 
-    fig, ax = plt.subplots(figsize=(10.2, 5.0))
-    for i, f in enumerate(filas):
-        valores = [v for v in (f["nueva_prom"], f["internet_prom"],
-                               f["mercado_prom"]) if v is not None]
-        ax.plot([min(valores), max(valores)], [i, i], color="#D1D5DB",
-                linewidth=5, solid_capstyle="round", zorder=1)
-        for valor, color in ((f["nueva_prom"], color_real),
-                             (f["internet_prom"], color_internet),
-                             (f["mercado_prom"], color_mercado)):
-            if valor is None:
+    fig, ax = plt.subplots(figsize=(8.8, 7.4))
+    ax.fill_between([0, tope], [0, tope], 0, color="#FEE2E2", alpha=0.45,
+                    zorder=0)
+    ax.plot([0, tope], [0, tope], "--", color="#6B7280", linewidth=1.9,
+            zorder=1)
+    ax.text(100, 100, "el anuncio se cumple", rotation=45, fontsize=10.5,
+            color="#4B5563", ha="center", va="bottom", style="italic",
+            rotation_mode="anchor")
+    ax.text(96, 42, "por debajo: el anuncio\npromete de más", fontsize=10.5,
+            color="#B91C1C", ha="center", va="center", style="italic")
+
+    for f in filas:
+        tipo = ETIQUETAS[f["categoria"]]
+        color = COLOR_TIPO[tipo]
+        real = f["nueva_prom"]
+        puntos = [("Internet", f["internet_prom"]),
+                  ("Mercado", f["mercado_prom"])]
+        xs = []
+        for nombre, anunciada in puntos:
+            if anunciada is None:
                 continue
-            ax.scatter([valor], [i], s=180, color=color, edgecolor="white",
-                       linewidth=1.7, zorder=3)
-        ax.text(f["nueva_prom"], i - 0.20, f"{f['nueva_prom']:.0f}",
-                ha="center", va="top", fontsize=11, fontweight="bold",
-                color=color_real)
-        ax.text(f["internet_prom"], i - 0.20, f"{f['internet_prom']:.0f}",
-                ha="center", va="top", fontsize=11, fontweight="bold",
-                color=color_internet)
-        ax.text(f["mercado_prom"], i + 0.20, f"{f['mercado_prom']:.0f}",
-                ha="center", va="bottom", fontsize=11, fontweight="bold",
-                color=color_mercado)
+            xs.append(anunciada)
+            if nombre == "Internet":
+                ax.scatter([anunciada], [real], s=260, marker="o",
+                           facecolor="none", edgecolor=color, linewidth=2.8,
+                           zorder=5)
+            else:
+                ax.scatter([anunciada], [real], s=200, marker="s",
+                           facecolor=color, edgecolor="white", linewidth=1.6,
+                           zorder=5)
+            ax.annotate(f"{_formato(anunciada)}", (anunciada, real),
+                        textcoords="offset points", xytext=(0, -20),
+                        ha="center", fontsize=9.5, color="#4B5563")
+        if len(xs) == 2:
+            ax.plot([min(xs), max(xs)], [real, real], color=color,
+                    linewidth=2.4, alpha=0.45, zorder=2,
+                    solid_capstyle="round")
+        ax.text(sum(xs) / len(xs), real + 7, tipo, color=color, fontsize=11.5,
+                fontweight="bold", ha="center")
 
-    ax.set_yticks(y)
-    ax.set_yticklabels([ETIQUETAS[t] for t in tipos], fontsize=12.5)
-    ax.set_xlabel("Autonomía promedio (km)", fontsize=12.5)
-    ax.set_xlim(0, 120)
-    ax.set_ylim(-0.7, len(tipos) - 0.3)
-    ax.set_title("La autonomía real de los dueños frente a la publicada",
+    ax.set_xlabel("Autonomía anunciada (km)", fontsize=12.5)
+    ax.set_ylabel("Autonomía real de fábrica según los dueños (km)",
+                  fontsize=12.5)
+    ax.set_xlim(0, tope)
+    ax.set_ylim(0, tope)
+    ax.set_aspect("equal")
+    ax.set_title("Los anuncios prometen más autonomía de la que entregan",
                  fontsize=16, fontweight="bold", pad=42)
     _leyenda_arriba(ax, [
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=color_real,
-               markeredgecolor="white", markersize=12, label="Real (dueños)"),
-        Line2D([0], [0], marker="o", color="none",
-               markerfacecolor=color_internet, markeredgecolor="white",
-               markersize=12, label="Publicada en Internet"),
-        Line2D([0], [0], marker="o", color="none",
-               markerfacecolor=color_mercado, markeredgecolor="white",
-               markersize=12, label="Publicada en Mercado"),
-    ], ncol=3)
+        Line2D([0], [0], marker="o", color="none", markerfacecolor="none",
+               markeredgecolor="#4B5563", markeredgewidth=2.2, markersize=12,
+               label="Internet (anunciado)"),
+        Line2D([0], [0], marker="s", color="none", markerfacecolor="#4B5563",
+               markeredgecolor="white", markersize=11,
+               label="Mercado (anunciado)"),
+    ], ncol=2)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="x", linestyle=":", alpha=0.4, zorder=0)
+    ax.grid(linestyle=":", alpha=0.35, zorder=0)
     fig.tight_layout()
     return _guardar(fig, ruta)
 
