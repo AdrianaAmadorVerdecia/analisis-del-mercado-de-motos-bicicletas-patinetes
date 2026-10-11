@@ -58,38 +58,29 @@ cada tipo en cada mercado.
 Pendiente: conseguir las fuentes restantes (Telegram y encuestas) y el análisis cruzado
 entre INTERNET y MERCADO para decidir dónde conviene comprar.
 
-## 2026-10-11 — Tercera fuente ENCUESTAS y conclusiones
+## 2026-10-11 — Tercera fuente ENCUESTAS y conclusiones generales
 
 Se incorporó la **tercera fuente: las encuestas a personas** que ya tienen un vehículo
-eléctrico (6 preguntas: tipo, marca, precio, tiempo, autonomía de nuevo y actual, y
-calidad). Hasta ahora hay **20 personas de las 30 previstas** (faltan 10). Las respuestas
-quedaron en `data/encuestas_personas.json`, normalizando meses a años, millas a km y
-corrigiendo algunos datos con la autora (P20: nueva 70, actual 50).
+eléctrico. Hasta ahora hay **20 personas de las 30 previstas** (faltan 10), guardadas en
+`data/encuestas_personas.json`, normalizando meses a años, millas a km y corrigiendo
+algunos datos con la autora (P20: nueva 70, actual 50).
 
-De las encuestas salieron cuatro análisis: los datos de cada persona, el resumen por tipo,
-la **degradación de la autonomía por marca** y la **calidad según los dueños**, más un
-contraste de la **autonomía real frente a la publicada**. Resultados: ninguna persona
-calificó su vehículo como malo (75 % bueno, 25 % regular); la autonomía cae con el uso;
-y los anuncios prometen más autonomía de la que reportan los dueños. Dos casos cambiaron
-la batería (P11, P16) y uno reporta mejora por asentamiento (P9): se marcan aparte para
-no falsear la degradación.
+De estas encuestas se hicieron los análisis: los datos de cada persona, el resumen por
+tipo, el contraste entre la **autonomía anunciada y la real**, y la **calidad según los
+dueños**. Resultados: ninguna persona calificó su vehículo como malo (75 % bueno, 25 %
+regular); la autonomía cae con el uso; y los anuncios prometen más autonomía de la que
+reportan los dueños. Dos casos cambiaron la batería (P11, P16) y uno reporta mejora por
+asentamiento (P9), y se marcan aparte para no falsear los resultados.
 
-El gráfico de degradación se rehízo varias veces (dispersión, barras, pendientes,
-burbujas) hasta dar con el definitivo: una **dispersión con línea de tendencia** que
-muestra a la vez los **años de uso** (eje x), la **autonomía perdida** (eje y) y el
-**tipo de vehículo** (color). Se hicieron además un **pastel** de la calidad y un
-**dumbbell** de autonomía real frente a la publicada.
+Se añadió un **explorador interactivo** (`interactivo.html`) donde cualquiera escribe su
+presupuesto y ve al instante en qué **fuente** (Internet o Mercado) y con qué **tipo de
+vehículo** llega más lejos; el notebook lo muestra incrustado y también se publica con
+GitHub Pages.
 
-Se añadió un **explorador interactivo** (`interactivo.html`, generado por
-`interactivo.py`): cualquiera escribe su presupuesto y ve, al instante, en qué
-**fuente** (Internet o Mercado) y con qué **tipo de vehículo** llega más lejos, con
-la mejor opción de cada fuente y de cada tipo comparadas con barras (sin nubes de
-puntos). El notebook lo muestra incrustado y también se publica con GitHub Pages.
+Por último se empezaron a escribir las **conclusiones generales del proyecto**, cruzando
+las tres fuentes: el precio lo explican sobre todo el **tipo de vehículo**, la **autonomía
+(y su batería)** y el **canal de venta**, más que la marca; y la **calidad** solo puede
+medirse con el uso real.
 
-Por último se escribieron las **conclusiones generales del estudio**, cruzando las tres
-fuentes: el precio lo explican, en orden, el **tipo de vehículo**, la **autonomía (y su
-batería)** y el **canal de venta**, más que la marca; la **calidad** solo se puede medir
-con el uso real y resulta **aceptable**, con la batería y la autonomía como puntos débiles.
-
-Pendiente: recibir las **10 encuestas que faltan** para cerrar la fuente y reajustar
-tablas y gráficos; y la autonomía de 14 de los 43 productos de CubAmerica.
+Pendiente: cerrar las **10 encuestas que faltan**, la autonomía de 14 de los 43 productos
+de CubAmerica, terminar las conclusiones y **pulir los gráficos**.
