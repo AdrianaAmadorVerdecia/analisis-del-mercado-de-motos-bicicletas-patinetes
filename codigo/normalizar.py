@@ -15,7 +15,7 @@ import json
 import re
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent / "data"
+DATA = Path(__file__).resolve().parent.parent / "data"
 
 MAX_POR_TIPO = 50
 MIN_PRECIO_USD = 100

@@ -28,7 +28,7 @@ import requests
 
 SITIO = "https://itencel.com"
 API = SITIO + "/wp-json/wp/v2/rtcl_listing"
-SALIDA = Path(__file__).resolve().parent / "data" / "itencel_anuncios.json"
+SALIDA = Path(__file__).resolve().parent.parent / "data" / "itencel_anuncios.json"
 
 TASA_CUP_POR_USD = 745     # tasa fijada por la autora
 MAX_POR_TIPO = 50          # tope de registros por tipo de vehiculo

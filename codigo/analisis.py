@@ -46,7 +46,7 @@ import numpy as np
 # CONFIGURACION GENERAL
 # ==============================================================================
 
-RAIZ = Path(__file__).resolve().parent
+RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_GRAFICOS = RAIZ / "graficos"
 
 TASA_CUP_POR_USD = 745
@@ -1028,72 +1028,59 @@ COLOR_TIPO = {"Moto eléctrica": "#1D6FE0",
 
 
 def figura_encuestas_real_vs_publicada(ruta: Path | None = None):
-    """Puntos: la autonomia que anuncia cada fuente (x) frente a la autonomia
-    real de fabrica de los dueños (y). La diagonal marca 'el anuncio se cumple':
-    por debajo, el anuncio promete de mas."""
-    from matplotlib.lines import Line2D
+    """Barras divergentes: por cada tipo, cuanto promete de mas (a la derecha) o
+    de menos (a la izquierda) cada fuente frente a la autonomia real de fabrica
+    que reportan los dueños."""
+    from matplotlib.patches import Patch
 
     filas = real_vs_publicada()
-    tope = 125
+    tipos = [ETIQUETAS[f["categoria"]] for f in filas]
+    color_fuente = {"Internet": "#1D6FE0", "Mercado": "#10B981"}
+    alto = 0.34
 
-    fig, ax = plt.subplots(figsize=(8.8, 7.4))
-    ax.fill_between([0, tope], [0, tope], 0, color="#FEE2E2", alpha=0.45,
-                    zorder=0)
-    ax.plot([0, tope], [0, tope], "--", color="#6B7280", linewidth=1.9,
-            zorder=1)
-    ax.text(100, 100, "el anuncio se cumple", rotation=45, fontsize=10.5,
-            color="#4B5563", ha="center", va="bottom", style="italic",
-            rotation_mode="anchor")
-    ax.text(96, 42, "por debajo: el anuncio\npromete de más", fontsize=10.5,
-            color="#B91C1C", ha="center", va="center", style="italic")
+    fig, ax = plt.subplots(figsize=(9.6, 5.8))
+    ax.axvspan(0, 200, color="#FEF2F2", zorder=0)
+    ax.axvspan(-200, 0, color="#EFF3F7", zorder=0)
+    ax.axvline(0, color="#6B7280", linewidth=1.6, zorder=2)
 
-    for f in filas:
-        tipo = ETIQUETAS[f["categoria"]]
-        color = COLOR_TIPO[tipo]
+    for i, f in enumerate(filas):
         real = f["nueva_prom"]
-        puntos = [("Internet", f["internet_prom"]),
-                  ("Mercado", f["mercado_prom"])]
-        xs = []
-        for nombre, anunciada in puntos:
+        pares = [("Internet", f["internet_prom"]),
+                 ("Mercado", f["mercado_prom"])]
+        for fuente, anunciada in pares:
             if anunciada is None:
                 continue
-            xs.append(anunciada)
-            if nombre == "Internet":
-                ax.scatter([anunciada], [real], s=260, marker="o",
-                           facecolor="none", edgecolor=color, linewidth=2.8,
-                           zorder=5)
-            else:
-                ax.scatter([anunciada], [real], s=200, marker="s",
-                           facecolor=color, edgecolor="white", linewidth=1.6,
-                           zorder=5)
-            ax.annotate(f"{_formato(anunciada)}", (anunciada, real),
-                        textcoords="offset points", xytext=(0, -20),
-                        ha="center", fontsize=9.5, color="#4B5563")
-        if len(xs) == 2:
-            ax.plot([min(xs), max(xs)], [real, real], color=color,
-                    linewidth=2.4, alpha=0.45, zorder=2,
-                    solid_capstyle="round")
-        ax.text(sum(xs) / len(xs), real + 7, tipo, color=color, fontsize=11.5,
-                fontweight="bold", ha="center")
+            dif = anunciada - real
+            pos = i + (alto * 0.55 if fuente == "Internet" else -alto * 0.55)
+            ax.barh(pos, dif, height=alto, color=color_fuente[fuente],
+                    edgecolor="white", linewidth=1.2, zorder=3)
+            signo = "+" if dif >= 0 else "−"
+            ax.text(dif + (2 if dif >= 0 else -2), pos,
+                    f"{signo}{_formato(abs(dif))}", va="center",
+                    ha="left" if dif >= 0 else "right", fontsize=10.5,
+                    color="#374151", fontweight="bold", zorder=4)
 
-    ax.set_xlabel("Autonomía anunciada (km)", fontsize=12.5)
-    ax.set_ylabel("Autonomía real de fábrica según los dueños (km)",
+    ax.set_yticks(range(len(filas)))
+    ax.set_yticklabels(tipos, fontsize=12)
+    ax.set_xlabel("Kilómetros de más (o de menos) que promete el anuncio",
                   fontsize=12.5)
-    ax.set_xlim(0, tope)
-    ax.set_ylim(0, tope)
-    ax.set_aspect("equal")
     ax.set_title("Los anuncios prometen más autonomía de la que entregan",
                  fontsize=16, fontweight="bold", pad=42)
+    ax.set_xlim(-60, 60)
+    ax.set_ylim(-0.6, len(filas) - 0.4)
+    ax.text(58, len(filas) - 0.5, "promete de más", ha="right", va="top",
+            fontsize=10.5, color="#B91C1C", style="italic")
+    ax.text(-58, len(filas) - 0.5, "promete de menos", ha="left", va="top",
+            fontsize=10.5, color="#1F4E79", style="italic")
     _leyenda_arriba(ax, [
-        Line2D([0], [0], marker="o", color="none", markerfacecolor="none",
-               markeredgecolor="#4B5563", markeredgewidth=2.2, markersize=12,
-               label="Internet (anunciado)"),
-        Line2D([0], [0], marker="s", color="none", markerfacecolor="#4B5563",
-               markeredgecolor="white", markersize=11,
-               label="Mercado (anunciado)"),
+        Patch(facecolor=color_fuente["Internet"], edgecolor="white",
+              label="Internet"),
+        Patch(facecolor=color_fuente["Mercado"], edgecolor="white",
+              label="Mercado"),
     ], ncol=2)
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(linestyle=":", alpha=0.35, zorder=0)
+    ax.spines[["top", "right", "left"]].set_visible(False)
+    ax.grid(axis="x", linestyle=":", alpha=0.35, zorder=0)
+    ax.set_axisbelow(True)
     fig.tight_layout()
     return _guardar(fig, ruta)
 

@@ -84,3 +84,14 @@ medirse con el uso real.
 
 Pendiente: cerrar las **10 encuestas que faltan**, la autonomía de 14 de los 43 productos
 de CubAmerica, terminar las conclusiones y **pulir los gráficos**.
+
+## 2026-10-12 — Barras divergentes y repositorio ordenado
+
+Se rediseñó el contraste entre la **autonomía anunciada y la real** como **barras
+divergentes**: cada fuente (Internet o Mercado) se compara con la autonomía real de fábrica,
+y la barra muestra hacia un lado cuánto **promete de más** el anuncio y hacia el otro cuánto
+promete de menos.
+
+Se **reorganizó el repositorio** para dejar la raíz limpia: todo el código pasó a `codigo/`,
+los datos y la encuesta a `data/`, y en la raíz quedaron solo el notebook, el README, el
+journal, la guía, y las carpetas de gráficos y datos.

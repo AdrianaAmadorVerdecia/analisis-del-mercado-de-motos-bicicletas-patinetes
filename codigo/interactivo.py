@@ -18,7 +18,7 @@ from pathlib import Path
 
 import analisis as a
 
-RAIZ = Path(__file__).resolve().parent
+RAIZ = Path(__file__).resolve().parent.parent
 DESTINO = RAIZ / "interactivo.html"
 
 FUENTES = (("Internet", "#2563EB"), ("Mercado", "#EA580C"))

@@ -27,7 +27,7 @@ import requests
 BASE = "https://islagrande.com"
 TIENDA = BASE + "/marketplace/seller/collection/shop/vedca/"
 CATALOGO = TIENDA + "?product_list_limit=48"  # trae los 29 productos en una sola pagina
-SALIDA = Path(__file__).resolve().parent / "data" / "vedca_islagrande.json"
+SALIDA = Path(__file__).resolve().parent.parent / "data" / "vedca_islagrande.json"
 
 # El sitio publica en euros; la autora fijo esta tasa para pasar a USD.
 TASA_USD_POR_EUR = 1.13

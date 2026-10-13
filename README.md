@@ -13,10 +13,11 @@ dicen con claridad cuánto rinde cada uno.
 | Archivo | Qué es |
 |---|---|
 | `proyecto.ipynb` | La historia, la problemática y los resultados con sus tablas y gráficos. **No tiene código**: solo texto, tablas e imágenes. |
-| `analisis.py` | **Todo el código del proyecto.** Aquí van los cálculos, las tablas y los gráficos, organizados por fuente de datos. |
-| `data/anuncios_revolico.json` | 224 anuncios de La Habana (75 motos, 75 bicicletas, 74 patinetes) |
-| `scraper_revolico.py` | Script que recopila y depura los anuncios |
-| `graficos/` | Los tres gráficos que genera `analisis.py` |
+| `codigo/analisis.py` | **Todo el código del proyecto.** Aquí van los cálculos, las tablas y los gráficos, organizados por fuente de datos. |
+| `codigo/scraper_*.py` | Scripts que recopilan y depuran los anuncios de cada sitio (Revolico, iTENCEL, VEDCA, CubAmerica). |
+| `data/*.json` | Los datasets de las fuentes (Internet, Mercado y encuestas), junto con `ENCUESTAS 20.docx`. |
+| `graficos/` | Los gráficos que genera `codigo/analisis.py` |
+| `interactivo.html` | Explorador interactivo (también publicado con GitHub Pages) |
 | `JOURNAL.md` | Bitácora diaria: qué se hizo cada día, sin hora |
 | `HANDS_OFF.md` | Guía de traspaso: cómo reproducir el proyecto |
 
@@ -24,7 +25,7 @@ dicen con claridad cuánto rinde cada uno.
 
 ```
 pip install -r requirements.txt
-python analisis.py             # genera los gráficos de la carpeta graficos/
+python codigo/analisis.py      # genera los gráficos de la carpeta graficos/
 jupyter lab                     # para abrir el notebook
 ```
 
@@ -34,7 +35,7 @@ scrapear (que además es lento y falla a menudo por la conexión).
 Para reconstruir los datos desde cero:
 
 ```
-python scraper_revolico.py
+python codigo/scraper_revolico.py
 ```
 
 ## La estructura

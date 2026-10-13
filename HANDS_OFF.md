@@ -25,8 +25,11 @@ cuáles son sus límites.
 
 | Archivo o carpeta | Contenido |
 |---|---|
-| `data/anuncios_revolico.json` | Dataset de 224 anuncios de La Habana (9 campos) |
-| `scraper_revolico.py` | Script que recopila y depura los anuncios de Revolico |
+| `data/` | Datasets de las fuentes (Internet, Mercado y encuestas) y `ENCUESTAS 20.docx` |
+| `codigo/analisis.py` | Todo el código del proyecto: cálculos, tablas y gráficos |
+| `codigo/scraper_*.py` | Scripts que recopilan y depuran los anuncios de cada sitio |
+| `graficos/` | Gráficos generados por `codigo/analisis.py` |
+| `docs/` | Versión web del explorador interactivo (GitHub Pages) |
 | `proyecto.ipynb` | Notebook con la historia del proyecto y el análisis |
 | `JOURNAL.md` | Bitácora diaria del proyecto |
 | `HANDS_OFF.md` | Este documento |
@@ -44,8 +47,8 @@ pip install -r requirements.txt
 ## 4. Cómo reproducir los datos
 
 ```
-python scraper_revolico.py              # corrida completa
-python scraper_revolico.py --piloto 3   # prueba rápida con 3 anuncios por tipo
+python codigo/scraper_revolico.py              # corrida completa
+python codigo/scraper_revolico.py --piloto 3   # prueba rápida con 3 anuncios por tipo
 ```
 
 **Pendiente de completar:** tiempo aproximado de ejecución, comportamiento del

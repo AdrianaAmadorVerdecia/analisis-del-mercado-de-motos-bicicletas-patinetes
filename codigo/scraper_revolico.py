@@ -58,7 +58,7 @@ TASA_CUP_POR_USD = 745
 BASE = "https://www.revolico.com"
 BUSCAR = BASE + "/search"
 
-DIR_PROYECTO = os.path.dirname(os.path.abspath(__file__))
+DIR_PROYECTO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARPETA_DATA = os.path.join(DIR_PROYECTO, "data")
 RUTA_JSON = os.path.join(CARPETA_DATA, "anuncios_revolico.json")
 

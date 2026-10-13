@@ -27,7 +27,7 @@ import requests
 
 API = "https://envioscubamerica.com/wp-json/wc/store/v1/products"
 BASE_TIENDA = "https://envioscubamerica.com/categoria-producto/transporte/"
-SALIDA = Path(__file__).resolve().parent / "data" / "cubamerica_envios.json"
+SALIDA = Path(__file__).resolve().parent.parent / "data" / "cubamerica_envios.json"
 
 # Categorias de la tienda que interesan: slug -> etiqueta para la cabecera.
 CATEGORIAS = (
