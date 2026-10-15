@@ -95,3 +95,22 @@ promete de menos.
 Se **reorganizó el repositorio** para dejar la raíz limpia: todo el código pasó a `codigo/`,
 los datos y la encuesta a `data/`, y en la raíz quedaron solo el notebook, el README, el
 journal, la guía, y las carpetas de gráficos y datos.
+
+## 2026-10-15 — Encuestas completas (35) y publicación del proyecto
+
+Se completó la **tercera fuente** con las **35 encuestas**: se reemplazó el documento por
+`data/ENCUESTAS 35.docx`, se agregaron las personas **P21–P35** a
+`data/encuestas_personas.json` (P20 se mantiene: nueva 70, actual 50) y se sumaron las
+**fotos de la libreta** en `data/evidencia encuestas/` como evidencia.
+
+Con las 35 se rehicieron los mismos análisis: la tabla de personas, el resumen por tipo
+(moto 21 personas, bicicleta 11, patinete 3), la **calidad según los dueños** (80 % bueno,
+20 % regular, 0 malo) y el contraste **anunciado vs real**, con las gráficas regeneradas
+(pastel de calidad y barras divergentes). Se actualizaron las tablas, los textos y las
+conclusiones del notebook, y se **eliminó la sección de limitaciones**.
+
+Por último se **publicó el proyecto**: se creó el issue en el repositorio de la asignatura
+(`matcom/ICD-26-27`, #29) con el nombre, el dominio (motos) y el enlace al repositorio, y
+se subió todo (encuestas, evidencia, gráficos y notebook) a GitHub.
+
+Pendiente: Telegram (fuente opcional) y la autonomía de 14 de los 43 productos de CubAmerica.
